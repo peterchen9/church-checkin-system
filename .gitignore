@@ -1,0 +1,25 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Logs and temporary files
+*.log
+tmp/
+temp/
+*.tmp
+
+# Local secrets and environment overrides
+.env
+.env.*
+!.env.example
+
+# Runtime uploads / exports that should not be committed
+uploads/
+exports/
+backups/
+*.sql
+*.sqlite
+*.db
