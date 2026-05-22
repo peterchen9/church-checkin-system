@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>智慧報到系統 - 後台管理</title>
+    <link rel="stylesheet" href="style_admin.css?v=2">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="admin-container">
+        <!-- 側邊導航欄 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h2>👑 系統管理後台</h2>
+            </div>
+            <nav class="sidebar-nav">
+                <button class="nav-btn active" data-tab="logs">
+                    <span class="icon">📋</span> 打卡紀錄查詢
+                </button>
+                <button class="nav-btn" data-tab="events">
+                    <span class="icon">📅</span> 課程與活動管理
+                </button>
+                <button class="nav-btn" data-tab="employees">
+                    <span class="icon">👥</span> 員工名單管理
+                </button>
+                <button class="nav-btn" data-tab="contacts">
+                    <span class="icon">📇</span> 通訊錄管理
+                </button>
+                <button class="nav-btn" onclick="window.open('index.html', '_blank')">
+                    <span class="icon">🔙</span> 另開前台報到
+                </button>
+                <button class="nav-btn" onclick="logout()" style="color: var(--danger); margin-top: auto; border-top: 1px solid #eee; border-radius: 0;">
+                    <span class="icon">🚪</span> 登出系統
+                </button>
+            </nav>
+        </aside>
+
+        <!-- 主要內容區 -->
+        <main class="main-content">
+            
+            <!-- 1. 打卡紀錄查詢 -->
+            <section id="tab-logs" class="tab-pane active">
+                <header class="section-header">
+                    <h2>📋 打卡紀錄查詢</h2>
+                </header>
+                <div class="filter-bar card" style="flex-wrap: wrap;">
+                    <div style="display: flex; gap: 5px; align-items: center;">
+                        <input type="date" id="filter-date-start">
+                        <span>至</span>
+                        <input type="date" id="filter-date-end">
+                    </div>
+                    <div id="filter-mode-container" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-left: 10px; margin-right: 10px;">
+                        <label><input type="checkbox" value="主日聚會" checked> 主日聚會</label>
+                        <label><input type="checkbox" value="成主課程" checked> 成主課程</label>
+                        <label><input type="checkbox" value="特別聚會" checked> 特別聚會</label>
+                        <label><input type="checkbox" value="同工打卡" checked> 同工打卡</label>
+                    </div>
+                    <input type="text" id="filter-name" placeholder="搜尋人名..." style="flex: 1; min-width: 150px;">
+                    <button class="btn primary" onclick="loadLogs()">查詢</button>
+                    <button class="btn" style="background: #10B981; color: white;" onclick="exportLogsToExcel()">匯出 Excel</button>
+                </div>
+                <div class="table-container card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>時間</th>
+                                <th>人名</th>
+                                <th>類別</th>
+                                <th>聚會/課程名稱</th>
+                                <th>狀態/堂次</th>
+                            </tr>
+                        </thead>
+                        <tbody id="logs-tbody">
+                            <!-- 載入資料 -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 2. 課程與活動管理 -->
+            <section id="tab-events" class="tab-pane">
+                <header class="section-header">
+                    <h2>📅 課程與活動管理</h2>
+                    <button class="btn primary" onclick="openEventModal()">+ 新增課程/活動</button>
+                </header>
+                <div class="grid-container" id="events-grid">
+                    <!-- 載入資料 -->
+                </div>
+            </section>
+
+            <!-- 3. 員工名單管理 -->
+            <section id="tab-employees" class="tab-pane">
+                <header class="section-header">
+                    <h2>👥 員工名單管理</h2>
+                    <button class="btn primary" onclick="openEmployeeModal()">+ 新增員工</button>
+                </header>
+                <div class="filter-bar card">
+                    <label style="font-weight: bold; margin-right: 10px;">選擇單位：</label>
+                    <select id="filter-emp-unit" onchange="loadEmployees()">
+                        <option value="">全部</option>
+                        <option value="新竹北門聖教會">新竹北門聖教會</option>
+                        <option value="美門社區關懷協會">美門社區關懷協會</option>
+                        <option value="伯利恆糧食之家">伯利恆糧食之家</option>
+                    </select>
+                </div>
+                <div class="table-container card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>名字</th>
+                                <th>所屬單位</th>
+                                <th>職稱</th>
+                                <th>職位</th>
+                                <th>聘僱性質</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="employees-tbody">
+                            <!-- 載入資料 -->
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- 4. 通訊錄管理 -->
+            <section id="tab-contacts" class="tab-pane">
+                <header class="section-header">
+                    <h2>📇 通訊錄管理</h2>
+                    <button class="btn primary" onclick="window.location.href='contact_form.html'">+ 新增人員</button>
+                </header>
+                <div class="filter-bar card">
+                    <select id="filter-contact-section" style="width: 150px;">
+                        <option value="">選擇牧區...</option>
+                    </select>
+                    <select id="filter-contact-group" style="width: 150px;">
+                        <option value="">選擇小組...</option>
+                    </select>
+                    <input type="text" id="contact-keyword" placeholder="搜尋姓名、電話、Email、地址..." style="flex:1;">
+                    <button class="btn primary" onclick="searchContacts()">查詢</button>
+                </div>
+                <div class="table-container card">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>會友編號</th>
+                                <th>姓名</th>
+                                <th>性別</th>
+                                <th>手機</th>
+                                <th>牧區/小組</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="contacts-tbody">
+                            <!-- 載入資料 -->
+                        </tbody>
+                    </table>
+                    <div id="contact-pagination" style="display: flex; justify-content: center; align-items: center; gap: 15px; margin-top: 15px;">
+                        <button class="btn btn-sm" id="contact-prev-btn" onclick="changeContactPage(-1)" style="background:var(--bg-light);">上一頁</button>
+                        <span id="contact-page-info" style="font-weight: bold; color: var(--text-light);">第 1 頁 / 共 1 頁</span>
+                        <button class="btn btn-sm" id="contact-next-btn" onclick="changeContactPage(1)" style="background:var(--bg-light);">下一頁</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <!-- Modals -->
+    <!-- 新增課程/活動 Modal -->
+    <div id="event-modal" class="modal">
+        <div class="modal-content card">
+            <span class="close" onclick="closeEventModal()">&times;</span>
+            <h3 style="margin-top:0;">新增課程 / 活動</h3>
+            <div class="form-group">
+                <label>類型</label>
+                <select id="event-type">
+                    <option value="course">成人主日學 (課程)</option>
+                    <option value="special">特別聚會</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>名稱</label>
+                <input type="text" id="event-name" placeholder="例如：裝備課程一">
+            </div>
+            <div class="form-group">
+                <label>總堂數</label>
+                <input type="number" id="event-sessions" value="1" min="1">
+            </div>
+            <div class="form-group">
+                <label>報名費 ($)</label>
+                <input type="number" id="event-price" value="0" min="0">
+            </div>
+            <button class="btn primary" style="width:100%;" onclick="saveEvent()">儲存</button>
+        </div>
+    </div>
+
+    <!-- 報名清單 Modal -->
+    <div id="reg-modal" class="modal">
+        <div class="modal-content card" style="max-width: 600px;">
+            <span class="close" onclick="closeRegModal()">&times;</span>
+            <h3 id="reg-title" style="margin-top:0;">報名清單</h3>
+            <input type="hidden" id="current-reg-event-id">
+            
+            <div class="add-reg-bar" style="display:flex; gap:10px; margin-bottom:15px;">
+                <input type="text" id="reg-input" placeholder="掃描 QR Code 或 輸入會友名字" style="flex:1;">
+                <button class="btn primary" onclick="addRegistration()">加入報名</button>
+            </div>
+
+            <table class="data-table">
+                <thead>
+                    <tr>
+                        <th>人名</th>
+                        <th>報名時間</th>
+                        <th>繳費狀態</th>
+                        <th>繳費時間</th>
+                        <th>上課狀況</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody id="regs-tbody">
+                    <!-- 載入資料 -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 新增員工 Modal -->
+    <div id="employee-modal" class="modal">
+        <div class="modal-content card">
+            <span class="close" onclick="closeEmployeeModal()">&times;</span>
+            <h3 style="margin-top:0;">新增員工</h3>
+            <div class="form-group">
+                <label>會友名字</label>
+                <input type="text" id="emp-name" placeholder="必須是通訊錄中存在的名字">
+            </div>
+            <div class="form-group">
+                <label>職稱</label>
+                <input type="text" id="emp-title" placeholder="例如：幹事">
+            </div>
+            <div class="form-group">
+                <label>職位</label>
+                <input type="text" id="emp-position" placeholder="例如：行政總務">
+            </div>
+            <div class="form-group">
+                <label>聘僱性質</label>
+                <select id="emp-type">
+                    <option value="全職">全職</option>
+                    <option value="約聘">約聘</option>
+                    <option value="計時">計時</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>所屬單位</label>
+                <select id="emp-unit">
+                    <option value="新竹北門聖教會">新竹北門聖教會</option>
+                    <option value="美門社區關懷協會">美門社區關懷協會</option>
+                    <option value="伯利恆糧食之家">伯利恆糧食之家</option>
+                </select>
+            </div>
+            <button class="btn primary" style="width:100%;" onclick="saveEmployee()">儲存</button>
+        </div>
+    </div>
+
+
+
+    <!-- 列印用隱藏區塊 -->
+    <div id="print-area" style="position: absolute; left: -10000px; top: -10000px; opacity: 0; pointer-events: none; z-index: -1;">
+        <div class="print-card" style="width: 85mm; height: 54mm; border: 1px solid #ccc; display: flex; flex-direction: row; align-items: center; justify-content: space-around; padding: 10px; box-sizing: border-box; background: white; margin: 0 auto;">
+            <div style="flex: 1; text-align: center;">
+                <h2 id="print-name" style="margin: 0; font-size: 24px; color: #333;"></h2>
+                <p id="print-church-id" style="margin: 5px 0 0 0; font-size: 14px; color: #666;"></p>
+            </div>
+            <div id="print-qrcode" style="flex: 1; display: flex; justify-content: center; align-items: center;"></div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="admin.js?v=6"></script>
+</body>
+</html>

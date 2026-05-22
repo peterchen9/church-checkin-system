@@ -40,3 +40,4 @@ if ($LASTEXITCODE -eq 0) {
 }
 
 git push -u origin main
+

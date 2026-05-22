@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>教會智慧報到系統</title>
+    <link rel="stylesheet" href="style.css?v=202605033">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-background">
+        <div class="glow-sphere sphere-1"></div>
+        <div class="glow-sphere sphere-2"></div>
+    </div>
+    <div class="app-container">
+        <!-- 頂部導航 -->
+        <header class="header">
+            <div class="header-title" style="position: relative; width: 100%; display: flex; align-items: center;">
+                <div class="logo-circle"></div>
+                <h1 style="font-size: 1.2rem; margin-left: 10px;">北門智能報到系統</h1>
+                <div class="header-actions" style="position: absolute; right: 0; display: flex; gap: 10px;">
+                    <button id="fullscreen-btn" class="icon-btn" title="全螢幕">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                    </button>
+                    <button id="toggle-camera" class="icon-btn" title="切換鏡頭">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
+                    </button>
+                    <button class="icon-btn" onclick="goHome()" title="回到首頁" id="btn-home" style="display: none;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    </button>
+                </div>
+            </div>
+        </header>
+
+        <!-- 首頁：類別選擇區 -->
+        <main id="view-home" class="main-content" style="display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <h2 style="color: var(--text-dark); margin-bottom: 30px;">請選擇報到種類</h2>
+            <div class="category-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; width: 100%; max-width: 500px;">
+                <button class="category-card" onclick="selectCategory('主日聚會')">
+                    <span class="icon" style="font-size: 2rem;">⛪</span>
+                    <h3>主日聚會</h3>
+                </button>
+                <button class="category-card" onclick="selectCategory('成主課程')">
+                    <span class="icon" style="font-size: 2rem;">📖</span>
+                    <h3>成主課程</h3>
+                </button>
+                <button class="category-card" onclick="selectCategory('特別聚會')">
+                    <span class="icon" style="font-size: 2rem;">🌟</span>
+                    <h3>特別聚會</h3>
+                </button>
+                <button class="category-card" onclick="selectCategory('牧區小組聚會')">
+                    <span class="icon" style="font-size: 2rem;">👨‍👩‍👧‍👦</span>
+                    <h3>牧區小組聚會</h3>
+                </button>
+                <button class="category-card" onclick="selectCategory('同工打卡')">
+                    <span class="icon" style="font-size: 2rem;">💼</span>
+                    <h3>同工打卡</h3>
+                </button>
+            </div>
+        </main>
+
+        <!-- 中繼選擇區：過渡畫面 (初始隱藏) -->
+        <main id="view-selection" class="main-content hidden">
+            <h2 id="selection-category-title" style="color: var(--text-dark); margin-bottom: 20px;">報到類別</h2>
+            
+            <!-- 課程與活動選擇區 -->
+            <div id="event-selection-container" class="glass-card hidden" style="margin-bottom: 20px; text-align: center; padding: 15px;">
+                <label for="event-select" style="font-weight: bold; color: var(--text-main);">選擇課程/聚會：</label>
+                <select id="event-select" style="padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.8); color: #000; font-size: 1.1rem; width: 100%; max-width: 300px; outline: none; margin-top: 10px;">
+                    <option value="">請選擇...</option>
+                </select>
+            </div>
+
+            <!-- 牧區與小組選擇區 -->
+            <div id="cellgroup-selection-container" class="glass-card hidden" style="margin-bottom: 20px; text-align: center; padding: 15px; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+                <div style="width: 100%; max-width: 300px;">
+                    <label for="section-select" style="font-weight: bold; color: var(--text-main); display: block; margin-bottom: 5px;">選擇牧區：</label>
+                    <select id="section-select" style="padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.8); color: #000; font-size: 1.1rem; width: 100%; outline: none;">
+                        <option value="">請選擇牧區...</option>
+                    </select>
+                </div>
+                <div style="width: 100%; max-width: 300px;">
+                    <label for="group-select" style="font-weight: bold; color: var(--text-main); display: block; margin-bottom: 5px;">選擇小組：</label>
+                    <select id="group-select" style="padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.8); color: #000; font-size: 1.1rem; width: 100%; outline: none;">
+                        <option value="">請先選擇牧區</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- 單位選擇區 (打卡系統) -->
+            <div id="unit-selection-container" class="glass-card hidden" style="margin-bottom: 20px; text-align: center; padding: 15px;">
+                <label for="unit-select" style="font-weight: bold; color: var(--text-main);">選擇所屬單位：</label>
+                <select id="unit-select" style="padding: 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.5); background: rgba(255,255,255,0.8); color: #000; font-size: 1.1rem; width: 100%; max-width: 300px; outline: none; margin-top: 10px;">
+                    <option value="">請選擇...</option>
+                    <option value="新竹北門聖教會">新竹北門聖教會</option>
+                    <option value="美門社區關懷協會">美門社區關懷協會</option>
+                    <option value="伯利恆糧食之家">伯利恆糧食之家</option>
+                </select>
+            </div>
+
+            <button id="btn-enter-scan" style="background: var(--primary); color: white; border: none; padding: 15px 30px; border-radius: 12px; font-size: 1.2rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); margin-top: 20px; transition: all 0.3s ease;">進入報到畫面</button>
+        </main>
+
+        <!-- 掃描區：報到畫面 (初始隱藏) -->
+        <main id="view-scan" class="main-content hidden">
+            <div class="scan-header" style="display: flex; flex-direction: column; align-items: center; justify-content: center; margin-bottom: 20px;">
+                <h2 id="current-category-title" style="margin: 0; color: var(--text-dark);">報到類別</h2>
+                <h3 id="scan-theme-display" style="margin: 5px 0 0 0; color: var(--primary); font-size: 1.2rem; font-weight: bold;"></h3>
+            </div>
+
+            <!-- 相機備用區 -->
+            <div class="camera-section">
+                <div id="reader-container" class="hidden">
+                    <div id="reader"></div>
+                </div>
+            </div>
+
+
+            <div id="status-card" class="glass-card status-card idle">
+                <div class="icon-container" id="status-icon">
+                    <span class="icon">✨</span>
+                </div>
+                <h2 id="status-title">等待掃描中...</h2>
+                <p id="status-message">請使用條碼掃描器掃描您的專屬 QR Code</p>
+                <div id="user-info" class="user-info hidden">
+                    <div class="tags">
+                        <span class="tag tag-section" id="user-section"></span>
+                        <span class="tag tag-group" id="user-group"></span>
+                    </div>
+                    <div class="name" id="user-name"></div>
+                </div>
+            </div>
+            
+            <div id="manual-search-container" style="margin-top: 20px; width: 100%; max-width: 400px; padding: 15px; background: rgba(255,255,255,0.7); border-radius: 12px;">
+                <h4 style="color: var(--text-dark); margin-top: 0; margin-bottom: 10px;">手動搜尋報到</h4>
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="manual-search-input" placeholder="請輸入姓名或電話..." style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid #D1D5DB; font-size: 1rem; outline: none;">
+                    <button id="btn-manual-search" style="background: var(--primary); color: white; border: none; border-radius: 8px; padding: 0 15px; cursor: pointer; font-weight: bold;">搜尋</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 選擇人員 Modal -->
+    <div id="select-member-modal" class="modal" style="display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
+        <div class="modal-content card" style="margin: 10% auto; width: 90%; max-width: 400px; background: white; padding: 20px; border-radius: 12px; position: relative;">
+            <span class="close" onclick="closeSelectMemberModal()" style="position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer;">&times;</span>
+            <h3 style="margin-top: 0;">請選擇人員</h3>
+            <p>找到多筆符合的資料，請選擇您的名字：</p>
+            <div id="member-select-list" style="display: flex; flex-direction: column; gap: 10px; max-height: 300px; overflow-y: auto;">
+                <!-- 載入人員按鈕 -->
+            </div>
+        </div>
+    </div>
+
+    <!-- 同工打卡安全碼 Modal -->
+    <div id="pin-modal" class="modal" style="display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);">
+        <div class="modal-content card" style="margin: 15% auto; width: 90%; max-width: 350px; background: white; padding: 25px; border-radius: 12px; position: relative; text-align: center;">
+            <span class="close" onclick="closePinModal()" style="position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer;">&times;</span>
+            <h3 style="margin-top: 0; color: var(--text-dark);">請輸入安全碼</h3>
+            <p style="color: #666; margin-bottom: 20px;">進入同工打卡需要驗證</p>
+            <input type="password" id="pin-input" placeholder="8位數密碼" style="padding: 12px; width: 100%; max-width: 250px; border-radius: 8px; border: 1px solid #ccc; font-size: 1.2rem; text-align: center; letter-spacing: 3px; outline: none;">
+            <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
+                <button id="btn-submit-pin" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer;">確認</button>
+            </div>
+            <p id="pin-error" style="color: var(--danger); font-size: 0.9rem; margin-top: 10px; display: none;">密碼錯誤，請重新輸入</p>
+        </div>
+    </div>
+
+    <!-- 用於捕獲掃描器輸入 -->
+    <input type="text" id="scanner-input" class="visually-hidden" autofocus autocomplete="off" inputmode="none">
+
+    <!-- 載入音效 (使用開源音效庫網址) -->
+    <audio id="sound-success" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=success-1-6297.mp3" preload="auto"></audio>
+    <audio id="sound-error" src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_51d2836ab7.mp3?filename=error-126627.mp3" preload="auto"></audio>
+
+    <script src="https://unpkg.com/html5-qrcode"></script>
+    <script src="app.js?v=202605033"></script>
+</body>
+</html>

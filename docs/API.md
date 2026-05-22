@@ -122,3 +122,4 @@
 - `api/checkin.php`
 - 資料庫 schema / migration
 - `.env.example`，只放環境變數名稱，不放真實密碼
+

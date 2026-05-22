@@ -43,3 +43,4 @@
 4. 初始化 repo、提交目前整理成果並設定 remote。
 
 詳細步驟請見 [docs/GITHUB_SETUP.md](docs/GITHUB_SETUP.md)。
+

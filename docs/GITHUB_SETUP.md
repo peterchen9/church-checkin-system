@@ -15,9 +15,20 @@ GitHub repository：
 https://github.com/peterchen9/church-checkin-system
 ```
 
-## 本機 Git 指令
+## 建議同步方式
 
-安裝 Git 後，在此資料夾執行：
+目前 GitHub 上已經有初始管理文件。安裝 Git 後，建議先 clone repository，再把本機整理出的前端檔案複製進 clone 出來的資料夾後提交。
+
+```powershell
+cd C:\Users\peter\OneDrive\Documents
+git clone https://github.com/peterchen9/church-checkin-system.git
+```
+
+若要在目前資料夾直接操作，需先處理遠端已有 commit 的情況，避免產生 unrelated history。
+
+## 空 repository 適用指令
+
+以下指令只適用於遠端 repository 還沒有任何 commit 的情況：
 
 ```powershell
 git init
@@ -27,6 +38,8 @@ git branch -M main
 git remote add origin https://github.com/peterchen9/church-checkin-system.git
 git push -u origin main
 ```
+
+若 repository 名稱不同，請替換 remote URL。
 
 也可以直接執行已準備好的 script：
 
