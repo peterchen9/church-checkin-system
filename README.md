@@ -21,10 +21,6 @@
 
 後端 PHP 原始碼目前尚未放入本機專案，前端呼叫的 API 請見 [docs/API.md](docs/API.md)。
 
-## 225 搬家到 240
-
-`192.168.16.225` 搬到 `192.168.16.240` 的三個系統紀錄請見 [docs/225-migration-notes.md](docs/225-migration-notes.md)。
-
 ## 外部前端依賴
 
 目前頁面直接透過 CDN 載入：
