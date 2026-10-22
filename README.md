@@ -2,10 +2,9 @@
 
 北門聖教會使用的智能報到系統，前台以活石條碼 / QR Code 掃描進行報到，後台提供報到紀錄、人員、活動、報名與付款狀態管理。
 
-## 線上入口
+## 部署進度
 
-- 前台：https://checkin.nghcc.org.tw/index.html
-- 後台：https://checkin.nghcc.org.tw/admin.html
+2026-10-22：已完成內網前後台入口部署，頁面及登入狀態檢查已驗證。活動與牧區資料讀取仍因資料庫驗證失敗而受阻，完整報到功能尚未恢復。詳見 [docs/PROGRESS.md](docs/PROGRESS.md)。
 
 ## 目前整理狀態
 
