@@ -21,6 +21,8 @@
 
 Nginx 直接沿用原站 `/home/peterchen/church_checkin` 及 PHP 8.1 FPM。頁面與登入狀態 API 可回應，但活動、牧區 API 回報 MySQL 1045（`peter@localhost` 驗證失敗）；原 HTTPS 站亦有相同錯誤，完整報到功能尚待修復資料庫連線。詳見 [docs/INTRANET.md](docs/INTRANET.md)。
 
+先前部署與驗證歷史保留於 [docs/PROGRESS.md](docs/PROGRESS.md)，現行設定以 [docs/SUNDAY_CHECKIN.md](docs/SUNDAY_CHECKIN.md) 為準。
+
 ## 目前整理狀態
 
 此資料夾已從線上站台整理出目前可公開取得的前端檔案：
