@@ -2,10 +2,24 @@
 
 北門聖教會使用的智能報到系統，前台以活石條碼 / QR Code 掃描進行報到，後台提供報到紀錄、人員、活動、報名與付款狀態管理。
 
-## 線上入口
+## 最新主日報到與列印（2026-10-24）
 
-- 前台：https://checkin.nghcc.org.tw/index.html
-- 後台：https://checkin.nghcc.org.tw/admin.html
+- 主日報到與內嵌列印：http://192.168.16.240:26001/eureka/sunday/
+- 獨立列印搜尋：http://192.168.16.240:26001/eureka/sunday/barcodes/
+- 標籤 25.4 × 25 mm、QR Code 20 × 20 mm、姓名 2 mm，每次 3 張；使用舊系統 MD5 檢查碼。
+- Chrome 專用啟動檔：scripts/start-label-printing.cmd；背景列印後清空搜尋結果。
+- 主日功能採 Django 行政平台原生整合；目前非主日測試限制仍開放。
+
+完整現行設定、驗證範圍與部署限制見 [docs/SUNDAY_CHECKIN.md](docs/SUNDAY_CHECKIN.md)。
+
+## 原 PHP 系統內網入口（暫用）
+
+已於 2026-10-22 部署並驗證：
+
+- 前台：http://192.168.16.240:8022/
+- 後台：http://192.168.16.240:8033/
+
+Nginx 直接沿用原站 `/home/peterchen/church_checkin` 及 PHP 8.1 FPM。頁面與登入狀態 API 可回應，但活動、牧區 API 回報 MySQL 1045（`peter@localhost` 驗證失敗）；原 HTTPS 站亦有相同錯誤，完整報到功能尚待修復資料庫連線。詳見 [docs/INTRANET.md](docs/INTRANET.md)。
 
 ## 目前整理狀態
 

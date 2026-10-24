@@ -1,0 +1,75 @@
+<section id="barcode-search-container" aria-labelledby="barcode-search-title" style="margin-top:20px;width:100%;max-width:400px;padding:15px;background:rgba(255,255,255,0.7);border-radius:12px;box-sizing:border-box;">
+    <h4 id="barcode-search-title" style="color:var(--text-dark,#172033);margin:0 0 10px;">搜尋列印 QR Code</h4>
+    <form id="search-form">
+        <div style="display:flex;gap:10px;">
+            <input id="keyword" aria-label="列印搜尋姓名或電話" placeholder="請輸入姓名或電話..." minlength="2" maxlength="50" required autocomplete="off" style="flex:1;min-width:0;padding:10px;border-radius:8px;border:1px solid #D1D5DB;font-size:1rem;outline:none;">
+            <button style="background:var(--primary,#2563eb);color:white;border:0;border-radius:8px;padding:0 15px;cursor:pointer;font-weight:bold;">搜尋</button>
+        </div>
+    </form>
+    <p id="status" role="status" style="font-size:0.9rem;margin:10px 0 0;"></p>
+    <div id="results"></div>
+</section>
+<style>
+#barcode-search-container .result{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 0;border-bottom:1px solid #D1D5DB;text-align:left}
+#barcode-search-container .result>div{min-width:0;overflow-wrap:anywhere}
+#barcode-search-container .result button{flex-shrink:0;background:var(--primary,#2563eb);color:white;border:0;border-radius:8px;padding:10px;cursor:pointer;font-weight:bold}
+</style>
+<script>
+let labelPrintBusy = false;
+async function printMemberLabels(member) {
+    if (labelPrintBusy) return;
+    labelPrintBusy = true;
+    const form = document.getElementById('search-form');
+    const results = document.getElementById('results');
+    const status = document.getElementById('status');
+    const controls = [...form.querySelectorAll('input,button'), ...results.querySelectorAll('button')];
+    controls.forEach(control => control.disabled = true);
+    status.textContent = '正在送出列印…';
+    const frame = document.createElement('iframe');
+    frame.title = '標籤列印';
+    frame.style.cssText = 'position:fixed;left:-10000px;top:0;width:400px;height:400px;border:0;';
+    frame.setAttribute('aria-hidden', 'true');
+    const finish = (error) => {
+        if (!labelPrintBusy) return;
+        labelPrintBusy = false;
+        controls.forEach(control => control.disabled = false);
+        if (error) {
+            status.textContent = error;
+        } else {
+            form.reset();
+            results.replaceChildren();
+            status.textContent = '';
+            document.getElementById('scanner-input')?.focus();
+        }
+        setTimeout(() => frame.remove(), 0);
+    };
+    frame.addEventListener('load', async () => {
+        try {
+            const printDocument = frame.contentDocument;
+            if (!printDocument || printDocument.querySelectorAll('section.label').length !== 3) {
+                throw new Error('標籤載入失敗，請確認登入狀態後重試。');
+            }
+            const printWindow = frame.contentWindow;
+            printWindow.addEventListener('afterprint', () => finish(), {once: true});
+            if (printDocument.fonts) await printDocument.fonts.ready;
+            printWindow.requestAnimationFrame(() => printWindow.requestAnimationFrame(() => {
+                try { printWindow.print(); }
+                catch (error) { finish('無法啟動列印，請重試。'); }
+            }));
+        } catch (error) {
+            finish(error.message || '無法載入標籤，請重試。');
+        }
+    }, {once: true});
+    frame.addEventListener('error', () => finish('標籤載入失敗，請重試。'), {once: true});
+    const base = '{% url "eureka:sunday_checkin:print" 0 %}'.replace('/0/', '/' + member.church_id + '/');
+    frame.src = base;
+    document.body.append(frame);
+}
+document.getElementById('search-form').addEventListener('submit',async event=>{
+ event.preventDefault();const result=document.getElementById('results'), status=document.getElementById('status');result.replaceChildren();status.textContent='搜尋中…';
+ try{const response=await fetch('{% url "eureka:sunday_checkin:members" %}?q='+encodeURIComponent(document.getElementById('keyword').value.trim()));if(response.redirected)throw new Error('登入已逾時，請重新整理並登入。');const data=await response.json();if(!data.success)throw new Error(data.message);
+ status.textContent=data.members.length?(data.has_more?'僅顯示前 20 筆，請縮小搜尋範圍。':'請核對人員後按直接列印，列印 3 張標籤。'):'找不到符合的人員。';
+ data.members.forEach(member=>{const row=document.createElement('div');row.className='result';const detail=document.createElement('div'),name=document.createElement('strong'),info=document.createElement('small');name.textContent=[member.name,member.section,member.group].filter(Boolean).join('／');detail.append(name);const button=document.createElement('button');button.textContent='直接列印';button.addEventListener('click',()=>printMemberLabels(member));row.append(detail,button);result.append(row);});
+ }catch(error){status.textContent=error.message||'搜尋失敗，請重試。';}
+});
+</script>

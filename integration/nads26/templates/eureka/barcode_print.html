@@ -1,0 +1,6 @@
+{% extends 'eureka/sunday_base.html' %}
+{% block title %}列印活石條碼{% endblock %}
+{% block content %}<h1>列印活石條碼</h1><p>利用姓名或電話搜尋通訊錄，核對人員後直接列印 3 張相同標籤。</p>
+{% if error %}<p class="notice error" role="alert">{{ error }}</p>{% endif %}
+{% include 'eureka/barcode_search.html' %}
+{% endblock %}

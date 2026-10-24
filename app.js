@@ -1,4 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
+    const sundayOnly = document.body.dataset.sundayOnly === 'true';
+    const checkinApi = document.body.dataset.checkinApi || 'api/checkin.php';
+    const checkinHeaders = { 'Content-Type': 'application/json' };
+    if (sundayOnly) {
+        checkinHeaders['X-CSRFToken'] = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    }
     // --- State & DOM Elements ---
     let currentMode = '主日聚會';
     let isProcessing = false;
@@ -160,6 +166,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     window.goHome = function() {
+        if (sundayOnly) return;
         viewScan.classList.add('hidden');
         viewSelection.classList.add('hidden');
         viewHome.classList.remove('hidden');
@@ -184,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
             console.error('Failed to fetch events', e);
         }
     }
-    fetchEvents();
+    if (!sundayOnly) fetchEvents();
 
     function populateEventSelect() {
         const typeMapping = {
@@ -262,6 +269,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Global keydown to capture input even if input loses focus
     document.addEventListener('keydown', (e) => {
         if (cameraModeActive || isProcessing) return;
+        if (e.target.closest('input:not(#scanner-input), textarea, select, button, a')) return;
         
         // Ensure input is focused for direct value reading, or fallback to buffer
         if (e.key === 'Enter') {
@@ -355,9 +363,9 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             // Call Backend API
-            const response = await fetch('api/checkin.php', {
+            const response = await fetch(checkinApi, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: checkinHeaders,
                 body: JSON.stringify({
                     qr_code_id: qrCodeId,
                     mode: currentMode,
@@ -368,6 +376,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
             });
 
+            if (response.redirected) throw new Error('登入已逾時，請重新整理頁面後登入。');
             const data = await response.json();
 
             if (data.success) {
@@ -376,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 showError(data.message);
             }
         } catch (error) {
-            showError("網路連線錯誤，請稍後再試。");
+            showError(error.message.includes('登入') ? error.message : "網路連線錯誤，請稍後再試。");
             console.error(error);
         }
     }
@@ -384,17 +393,14 @@ document.addEventListener('DOMContentLoaded', () => {
     function showSuccess(member) {
         statusCard.className = 'glass-card status-card success';
         statusIcon.innerHTML = '<span class="icon">✅</span>';
-        statusTitle.textContent = '報到成功！';
-        statusMessage.textContent = `${currentMode} 已完成紀錄`;
+        statusTitle.textContent = '報到成功';
+        const serviceLabels = { '第一堂': '第一堂崇拜', '第二堂': '第二堂崇拜', '晚崇拜': '晚崇拜' };
+        statusMessage.textContent = serviceLabels[member.status] || member.status || `${currentMode} 已完成紀錄`;
 
         userSection.textContent = member.section || '無牧區';
         userGroup.textContent = member.family1 || '無小組';
         
-        if (member.status) {
-            userName.innerHTML = `${member.name} <br><span style="font-size:0.8em;color:var(--primary);">${member.status}</span>`;
-        } else {
-            userName.textContent = member.name;
-        }
+        userName.textContent = member.name;
         
         userInfo.classList.remove('hidden');
         
@@ -498,9 +504,9 @@ document.addEventListener('DOMContentLoaded', () => {
                 targetUnit = unitSelect ? unitSelect.value : null;
             }
 
-            const response = await fetch('api/checkin.php', {
+            const response = await fetch(checkinApi, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: checkinHeaders,
                 body: JSON.stringify({
                     qr_code_id: keyword,
                     is_manual_search: true,
@@ -512,6 +518,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 })
             });
 
+            if (response.redirected) throw new Error('登入已逾時，請重新整理頁面後登入。');
             const data = await response.json();
 
             if (data.multiple) {
@@ -524,7 +531,13 @@ document.addEventListener('DOMContentLoaded', () => {
                     btn.style.padding = '15px';
                     btn.style.display = 'flex';
                     btn.style.flexDirection = 'column';
-                    btn.innerHTML = `<strong style="font-size:1.1rem">${m.name}</strong><span style="font-size:0.9rem;opacity:0.8">${m.section || '無牧區'} / ${m.family1 || '無小組'}</span>`;
+                    const name = document.createElement('strong');
+                    name.style.fontSize = '1.1rem';
+                    name.textContent = m.name;
+                    const detail = document.createElement('span');
+                    detail.style.cssText = 'font-size:0.9rem;opacity:0.8';
+                    detail.textContent = `${m.section || '無牧區'} / ${m.family1 || '無小組'}`;
+                    btn.append(name, detail);
                     btn.onclick = () => {
                         selectMemberModal.style.display = 'none';
                         isProcessing = false;
@@ -542,9 +555,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 showError(data.message);
             }
         } catch (error) {
-            showError("網路連線錯誤，請稍後再試。");
+            showError(error.message.includes('登入') ? error.message : "網路連線錯誤，請稍後再試。");
             console.error(error);
         }
     }
 
+    if (sundayOnly) {
+        proceedWithCategory('主日聚會');
+        document.getElementById('btn-home').style.display = 'none';
+        document.title = '主日聚會報到 - 北門智能報到系統';
+    }
 });
