@@ -15,6 +15,7 @@
 | 報到資料庫設定 | /etc/church-checkin/database.json | 只保存在受限備份 |
 | 報到獨立服務設定 | /home/peter/church-checkin-standalone/config/settings.json | 掛載為 /config/settings.json，只保存在受限備份 |
 | 本機媒體與附件 | /home/apps1/nads26/media、private_media、_rooms | 完整備份含原始內容 |
+| 共用會員照片 | /home/apps1/nads26/media/eureka/photo；歷史為 media/eureka/photo_history | 已含於本機媒體封包；資料庫內舊 photo_base64 亦含於 SQL |
 | NAS 檔案中心 | /home/apps1/nads26/media/NADS_FileCenter | CIFS 來源 //172.20.50.4/NADS_FileCenter，獨立封包 |
 
 兩套服務共用 nads26db.members 通訊錄及 sunday_checkins 主日報到資料；平台 checkin_records 為出席彙整來源之一。正式資料未複製到 GitHub。
@@ -37,13 +38,15 @@
 
 | 備份項目 | 內容 |
 | --- | --- |
-| database/all-databases.sql.gz | MySQL 全資料庫一致性邏輯匯出，含 routines、events、triggers、binary-safe values |
+| database/all-databases.sql.gz | MySQL 全資料庫邏輯匯出；本系統 nads26db 的 127 個 InnoDB 表具交易一致性，含 routines、events、triggers、binary-safe values |
 | archives/platform.tar.zst | 平台程式、環境設定、static、private_media、_rooms、原始文件與記錄；media、mysql_data、舊備份分開保存 |
 | archives/checkin.tar.zst | 原 PHP 網站與獨立報到服務完整主機目錄，包含私人 config |
 | archives/checkin-runtime-app.tar.gz | 報到容器實際 /srv/app 程式 |
 | archives/media-local.tar.zst | media 本機內容，排除另存的 NAS 子樹 |
 | archives/media-nas.tar.zst | NAS FileCenter 完整內容 |
 | archives/host-config.tar.zst | Nginx、PHP、church-checkin、cron、fstab 與 TLS 設定，含敏感檔 |
+| archives/system-crontabs.tar.zst | 主機 root 與使用者原始 crontab，僅存於受限備份 |
+| archives/nas-credentials.tar.zst | NAS 掛載引用的獨立憑證檔，僅存於受限備份 |
 | archives/existing-backups.tar.zst | 平台目錄內既有備份 |
 | archives/mysql-live-secondary.tar.zst | 執行中 MySQL 實體檔的次要救援副本，不作為一致性還原來源 |
 | images/runtime-images.tar.zst | 平台、MySQL、報到三個正式 Docker 映像 |
@@ -60,9 +63,19 @@
 
 本次沒有執行整機還原、實際 TLS 重簽或正式服務切換。執行中 MySQL 實體副本不可直接覆蓋 datadir。
 
-## 既有每日備份狀態
+## 既有固定備份排程與限制
 
-每日 02:00 的 /home/apps1/nads26/scripts/backup.sh 已設定，但 2026-11-01 至 11-07 的排程紀錄均顯示目的地無法寫入。/mnt/usb1t/nads26 目前實際位於主機系統磁碟，沒有獨立掛載 USB。本次為另建完整備份，沒有擅自修改既有排程或目的地權限；今天一次備份成功不代表每日排程已修復。
+補查 root 與 peter 的原始 crontab 後確認：
+
+| 帳號／時間 | 作業與目的地 | 已確認狀態 |
+| --- | --- | --- |
+| root 每天 18:00 | rsync -avr --delete /home/ 至 /mnt/usb1t/gino25-home/ | 有固定排程及既有鏡像，涵蓋兩套位於 /home 的程式；覆寫式同步，不等於每日獨立快照，也不能保證執行中 MySQL 實體檔一致性 |
+| root 每週日 05:00 | sh /home/apps1/nads26/scripts/backup.sh，保存至 /mnt/usb1t/nads26/latest/ 與 nads-bkYYYYMM.tar.gz | 有固定排程；latest SQL 最後修改 2026-11-01 05:00，16,849,872 bytes；每月同名封包可能於當月再次執行時覆寫 |
+| peter 每天 02:00 | /home/apps1/nads26/scripts/backup.sh | 2026-11-01 至 11-07 的該帳號執行紀錄顯示目的地無法寫入 |
+
+兩個 /mnt/usb1t 下的目的地目前都在主機系統磁碟 /dev/sda2，沒有獨立 USB 掛載。每日 /home 鏡像未涵蓋 /etc 下的 PHP DB 設定、NAS 憑證與 Nginx/TLS 設定；沒有將這些排程視為已驗證的全系統還原點。本次完整備份另外涵蓋相關設定、NAS 全部文件與一致性 nads26db SQL，並保存至本機 D 槽。
+
+原始 root／使用者 crontab 已以 archives/system-crontabs.tar.zst 保存，篩選摘要在 inventory/system-backup-cron-summary.txt。先前只查 peter crontab 的結論不完整；現以本節為準。本次未變更任何排程或目錄權限，未另行宣稱既有 root 排程的最近整批執行成功。
 
 ## 已完成的資料庫與服務驗證
 
