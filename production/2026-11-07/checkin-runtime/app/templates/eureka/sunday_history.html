@@ -1,0 +1,9 @@
+{% if sunday_attendance %}
+<div style="margin:12px 0;padding:12px;border:1px solid #334155;border-radius:8px;">
+    <strong>主日聚會報到（新系統）</strong>
+    <ul style="margin:8px 0 0;padding-left:20px;">
+    {% for attendance in sunday_attendance %}<li>{{ attendance.date|date:"Y-m-d" }} · {{ attendance.service }} · 已出席（{{ attendance.checked_in_at|date:"H:i" }}）</li>{% endfor %}
+    </ul>
+    <small>顯示最近 12 筆；下方保留原有出席歷史。</small>
+</div>
+{% endif %}

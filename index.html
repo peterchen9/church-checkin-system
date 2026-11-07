@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>教會智慧報到系統</title>
-    <link rel="stylesheet" href="style.css?v=202605033">
+    <link rel="stylesheet" href="style.css?v=20261107-access-mobile">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
 </head>
 <body>
@@ -17,13 +17,10 @@
         <header class="header">
             <div class="header-title" style="position: relative; width: 100%; display: flex; align-items: center;">
                 <div class="logo-circle"></div>
-                <h1 style="font-size: 1.2rem; margin-left: 10px;">北門智能報到系統</h1>
+                <h1 style="font-size: 1.2rem; margin-left: 10px;">北門報到系統</h1>
                 <div class="header-actions" style="position: absolute; right: 0; display: flex; gap: 10px;">
                     <button id="fullscreen-btn" class="icon-btn" title="全螢幕">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
-                    </button>
-                    <button id="toggle-camera" class="icon-btn" title="切換鏡頭">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>
                     </button>
                     <button class="icon-btn" onclick="goHome()" title="回到首頁" id="btn-home" style="display: none;">
                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
@@ -112,13 +109,6 @@
                 <h3 id="scan-theme-display" style="margin: 5px 0 0 0; color: var(--primary); font-size: 1.2rem; font-weight: bold;"></h3>
             </div>
 
-            <!-- 相機備用區 -->
-            <div class="camera-section">
-                <div id="reader-container" class="hidden">
-                    <div id="reader"></div>
-                </div>
-            </div>
-
 
             <div id="status-card" class="glass-card status-card idle">
                 <div class="icon-container" id="status-icon">
@@ -131,7 +121,7 @@
                         <span class="tag tag-section" id="user-section"></span>
                         <span class="tag tag-group" id="user-group"></span>
                     </div>
-                    <div class="name" id="user-name"></div>
+                    <div class="name-row"><span class="fireworks" aria-hidden="true"><i></i><i></i><i></i></span><div class="name" id="user-name"></div><span class="fireworks" aria-hidden="true"><i></i><i></i><i></i></span></div>
                 </div>
             </div>
             
@@ -163,7 +153,7 @@
             <span class="close" onclick="closePinModal()" style="position: absolute; right: 20px; top: 15px; font-size: 24px; cursor: pointer;">&times;</span>
             <h3 style="margin-top: 0; color: var(--text-dark);">請輸入安全碼</h3>
             <p style="color: #666; margin-bottom: 20px;">進入同工打卡需要驗證</p>
-            <input type="password" id="pin-input" placeholder="8位數密碼" style="padding: 12px; width: 100%; max-width: 250px; border-radius: 8px; border: 1px solid #ccc; font-size: 1.2rem; text-align: center; letter-spacing: 3px; outline: none;">
+            <input type="password" id="pin-input" placeholder="請輸入密碼" style="padding: 12px; width: 100%; max-width: 250px; border-radius: 8px; border: 1px solid #ccc; font-size: 1.2rem; text-align: center; letter-spacing: 3px; outline: none;">
             <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px;">
                 <button id="btn-submit-pin" style="background: var(--primary); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-size: 1.1rem; font-weight: bold; cursor: pointer;">確認</button>
             </div>
@@ -175,10 +165,10 @@
     <input type="text" id="scanner-input" class="visually-hidden" autofocus autocomplete="off" inputmode="none">
 
     <!-- 載入音效 (使用開源音效庫網址) -->
+    
+    
     <audio id="sound-success" src="https://cdn.pixabay.com/download/audio/2021/08/04/audio_0625c1539c.mp3?filename=success-1-6297.mp3" preload="auto"></audio>
     <audio id="sound-error" src="https://cdn.pixabay.com/download/audio/2022/03/10/audio_51d2836ab7.mp3?filename=error-126627.mp3" preload="auto"></audio>
-
-    <script src="https://unpkg.com/html5-qrcode"></script>
-    <script src="app.js?v=202605033"></script>
+    <script src="app.js?v=20261107-access-mobile"></script>
 </body>
 </html>

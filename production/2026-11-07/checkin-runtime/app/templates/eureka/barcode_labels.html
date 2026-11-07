@@ -1,0 +1,12 @@
+<!doctype html><html lang="zh-Hant"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>活石條碼標籤</title>
+<style>
+*{box-sizing:border-box}body{font-family:system-ui,"Microsoft JhengHei",sans-serif;margin:0;color:#000;background:#e9edf2}.controls{padding:20px;max-width:720px;margin:auto;line-height:1.8}.controls button{font:inherit;padding:10px 20px;cursor:pointer}.label{background:white;width:{{ width }}mm;height:{{ height }}mm;padding:1mm 2mm;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;margin:12px auto;break-inside:avoid}.name{font-size:{{ name_font }}mm;line-height:1;font-weight:normal;white-space:nowrap;text-align:center;flex-shrink:0;margin-top:0.5mm}.label svg{display:block;width:{{ qr_size }}mm;height:{{ qr_size }}mm;flex-shrink:0}@page{size:{{ width }}mm {{ height }}mm;margin:0}@media print{body{background:#fff}.controls{display:none}.label{margin:0;break-after:page}.label:last-child{break-after:auto}}
+</style></head><body><div class="controls"><h1>3 張相同活石 QR Code</h1><p>{{ member.name }} · 編號 {{ member.church_id }} · {{ width }} × {{ height }} mm</p><p>請選擇已安裝的條碼機，份數設為 <strong>1</strong>（本頁已有 3 張）、縮放 <strong>100%</strong>，並關閉頁首頁尾。請核對預覽為 3 頁；實際出紙結果需在印表機確認。</p><button onclick="window.print()">列印 3 張標籤</button></div>
+{% for copy in copies %}<section class="label">{{ barcode_svg }}<div class="name">{{ member.name }}</div></section>{% endfor %}<script>
+if (new URLSearchParams(window.location.search).get('autoprint') === '1') {
+    window.addEventListener('load', async () => {
+        if (document.fonts) await document.fonts.ready;
+        requestAnimationFrame(() => requestAnimationFrame(() => window.print()));
+    }, {once: true});
+}
+</script></body></html>

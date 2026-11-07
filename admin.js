@@ -1,9 +1,42 @@
 document.addEventListener('DOMContentLoaded', async () => {
+    // --- Sidebar controls ---
+    const sidebar = document.querySelector('.sidebar');
+    const sidebarToggle = document.getElementById('sidebar-toggle');
+    const sidebarStorageKey = 'beimen-admin-sidebar-collapsed';
+    let sidebarCollapsed = window.matchMedia('(max-width: 767px)').matches;
+    try {
+        const saved = localStorage.getItem(sidebarStorageKey);
+        if (!window.matchMedia('(max-width: 767px)').matches && saved !== null) sidebarCollapsed = saved === 'true';
+    } catch {}
+    function updateSidebar() {
+        sidebar.classList.toggle('is-collapsed', sidebarCollapsed);
+        sidebarToggle.setAttribute('aria-expanded', String(!sidebarCollapsed));
+        sidebarToggle.setAttribute('aria-label', sidebarCollapsed ? '展開功能選單' : '收合功能選單');
+        sidebarToggle.title = sidebarCollapsed ? '展開功能選單' : '收合功能選單';
+        sidebarToggle.textContent = sidebarCollapsed ? '☰' : '‹';
+    }
+    sidebarToggle.addEventListener('click', () => {
+        sidebarCollapsed = !sidebarCollapsed;
+        updateSidebar();
+        try { localStorage.setItem(sidebarStorageKey, String(sidebarCollapsed)); } catch {}
+    });
+    sidebar.querySelectorAll('.nav-btn').forEach(button => {
+        button.title = button.textContent.trim();
+        button.setAttribute('aria-label', button.textContent.trim());
+        button.addEventListener('click', () => {
+            if (window.matchMedia('(max-width: 767px)').matches) {
+                sidebarCollapsed = true;
+                updateSidebar();
+            }
+        });
+    });
+    updateSidebar();
+
     // --- Auth Check ---
-    const checkRes = await fetch('api/login.php?action=check');
+    const checkRes = await fetch('api/login.php?action=check', { cache: 'no-store' });
     const checkData = await checkRes.json();
     if (!checkData.success) {
-        window.location.href = 'login.html';
+        window.location.replace('http://192.168.16.240:8033/official-login.php?v=20261027-login-return');
         return;
     }
 
@@ -20,16 +53,17 @@ document.addEventListener('DOMContentLoaded', async () => {
             document.getElementById(`tab-${target}`).classList.add('active');
             
             if (target === 'logs') loadLogs();
+            if (target === 'sunday-records') { const url = new URL('/sunday/records/', window.location.href); if (window.location.port === '8033') url.port = '8022'; document.getElementById('sunday-records-frame').src = url.href; }
             if (target === 'events') loadEvents();
             if (target === 'employees') loadEmployees();
-            if (target === 'contacts') searchContacts();
+            if (target === 'contacts') { fetchSections(); searchContacts(); }
         });
     });
 
     // Initialize
     document.getElementById('filter-date-start').valueAsDate = new Date();
     document.getElementById('filter-date-end').valueAsDate = new Date();
-    fetchSections(); // Load sections for contacts
+
     
     // Check hash or query param to determine which tab to open
     const urlParams = new URLSearchParams(window.location.search);
@@ -48,10 +82,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (btn) {
             btn.click();
         } else {
-            loadLogs();
+            document.querySelector('.nav-btn[data-tab="sunday-records"]').click();
         }
     } else {
-        loadLogs();
+        document.querySelector('.nav-btn[data-tab="sunday-records"]').click();
     }
 });
 
@@ -137,29 +171,33 @@ function exportLogsToExcel() {
 async function loadEvents() {
     const res = await apiCall('get_events');
     const grid = document.getElementById('events-grid');
-    grid.innerHTML = '';
-    
-    if (res.success) {
-        res.data.forEach(evt => {
-            const card = document.createElement('div');
-            card.className = 'card event-card';
-            const typeLabel = evt.type === 'course' ? '成人主日學' : '特別聚會';
-            card.innerHTML = `
-                <div style="display:flex; justify-content:space-between;">
-                    <span class="badge badge-primary">${typeLabel}</span>
-                    <div>
-                        <button class="btn btn-sm" onclick='editEvent(${JSON.stringify(evt)})' style="background:var(--secondary); color:white; margin-right:5px;">編輯</button>
-                        <button class="btn btn-sm" onclick="deleteEvent(${evt.id})" style="background:var(--danger); color:white;">刪除</button>
-                    </div>
-                </div>
-                <h3 style="margin: 10px 0;">${evt.name}</h3>
-                <p>堂數: ${evt.total_sessions} | 費用: $${evt.price}</p>
-                <button class="btn primary" style="width:100%; margin-top:10px;" onclick="openRegModal(${evt.id}, '${evt.name}')">報名管理</button>
-            `;
-            grid.appendChild(card);
-        });
-    }
+    grid.replaceChildren();
+    if (!res.success) return;
+    res.data.forEach(evt => {
+        const card = document.createElement('div'); card.className = 'card event-card';
+        const badge = document.createElement('span'); badge.className = 'badge badge-primary';
+        badge.textContent = evt.read_only ? '平台課程' : '特別聚會'; card.appendChild(badge);
+        const title = document.createElement('h3'); title.textContent = `${evt.code ? evt.code + ' · ' : ''}${evt.name}`;
+        card.appendChild(title);
+        const info = document.createElement('p');
+        info.textContent = `堂數：${evt.total_sessions} ｜ ${evt.read_only ? '費用請洽課程負責人' : '費用：$' + evt.price}`;
+        card.appendChild(info);
+        if (evt.read_only) {
+            const details = document.createElement('p'); details.textContent = [evt.teachers, evt.class_time].filter(Boolean).join(' ｜ '); card.appendChild(details);
+            const link = document.createElement('a'); link.className = 'btn';
+            link.href = `http://192.168.16.240:26001/education/courses/${evt.platform_course_id}/`;
+            link.target = '_blank'; link.rel = 'noopener'; link.textContent = '至平台查看／維護課程'; card.appendChild(link);
+        } else {
+            const edit = document.createElement('button'); edit.className = 'btn btn-sm'; edit.textContent = '編輯'; edit.onclick = () => editEvent(evt); card.appendChild(edit);
+            const remove = document.createElement('button'); remove.className = 'btn btn-sm'; remove.textContent = '刪除'; remove.onclick = () => deleteEvent(evt.id); card.appendChild(remove);
+        }
+        const register = document.createElement('button'); register.className = 'btn primary';
+        register.textContent = '報名管理'; register.onclick = () => openRegModal(evt.id, evt.name);
+        register.style.cssText = 'width:100%;margin-top:10px'; card.appendChild(register); grid.appendChild(card);
+    });
+    if (!res.data.length) grid.textContent = '尚無課程或特別聚會，請到平台建立課程，或新增特別聚會。';
 }
+
 
 let currentEventId = null;
 function openEventModal(evt = null) { 
@@ -171,7 +209,7 @@ function openEventModal(evt = null) {
         document.getElementById('event-price').value = evt.price;
     } else {
         currentEventId = null;
-        document.getElementById('event-type').value = 'course';
+        document.getElementById('event-type').value = 'special';
         document.getElementById('event-name').value = '';
         document.getElementById('event-sessions').value = 1;
         document.getElementById('event-price').value = 0;
@@ -270,48 +308,35 @@ async function deleteRegistration(id) {
 }
 
 // --- EMPLOYEES ---
+// The platform's HR master is authoritative; this page never edits personnel.
 async function loadEmployees() {
     const res = await apiCall('get_employees');
     const tbody = document.getElementById('employees-tbody');
-    tbody.innerHTML = '';
-    
-    if (res.success) {
-        const filterUnit = document.getElementById('filter-emp-unit').value;
-        let filteredData = res.data;
-        if (filterUnit) {
-            filteredData = res.data.filter(emp => emp.unit === filterUnit);
+    tbody.replaceChildren();
+    if (!res.success) return;
+    const select = document.getElementById('filter-emp-unit');
+    const selected = select.value;
+    select.replaceChildren(new Option('全部部門', ''));
+    [...new Set(res.data.map(emp => emp.unit))].sort().forEach(unit => select.add(new Option(unit, unit)));
+    if ([...select.options].some(option => option.value === selected)) select.value = selected;
+    const people = res.data.filter(emp => !select.value || emp.unit === select.value);
+    people.forEach(emp => {
+        const row = document.createElement('tr');
+        for (const value of [emp.name, emp.employee_no || '—', emp.unit, emp.identity_code || '—', Number(emp.is_active) ? '在職' : '停用／離職']) {
+            const cell = document.createElement('td'); cell.textContent = value; row.appendChild(cell);
         }
-
-        const grouped = {};
-        filteredData.forEach(emp => {
-            const unit = emp.unit || '未分配單位';
-            if (!grouped[unit]) grouped[unit] = [];
-            grouped[unit].push(emp);
-        });
-
-        for (const unit in grouped) {
-            const unitTr = document.createElement('tr');
-            unitTr.innerHTML = `<td colspan="6" style="background: var(--bg-light); font-weight: bold; text-align: center; font-size: 1.1em; color: var(--primary);">${unit}</td>`;
-            tbody.appendChild(unitTr);
-
-            grouped[unit].forEach(emp => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td>${emp.name}</td>
-                    <td>${emp.unit || '-'}</td>
-                    <td>${emp.title}</td>
-                    <td>${emp.position}</td>
-                    <td>${emp.emp_type}</td>
-                    <td>
-                        <button class="btn btn-sm" onclick='editEmployee(${JSON.stringify(emp).replace(/'/g, "&#39;")})' style="background:var(--secondary); color:white;">編輯</button>
-                        <button class="btn btn-sm" onclick="deleteEmployee(${emp.id})" style="background:var(--danger); color:white;">移除</button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
+        const cell = document.createElement('td');
+        const link = document.createElement('a');
+        link.href = 'http://192.168.16.240:26001/eureka/staff/';
+        link.target = '_blank'; link.rel = 'noopener'; link.textContent = '至平台管理';
+        cell.appendChild(link); row.appendChild(cell); tbody.appendChild(row);
+    });
+    if (!people.length) {
+        const row = document.createElement('tr'); const cell = document.createElement('td');
+        cell.colSpan = 6; cell.textContent = '目前沒有符合的人事資料。'; row.appendChild(cell); tbody.appendChild(row);
     }
 }
+
 
 let currentEmployeeId = null;
 function openEmployeeModal(emp = null) { 
@@ -356,8 +381,8 @@ async function saveEmployee() {
     }
 }
 async function logout() {
-    await fetch('api/login.php?action=logout');
-    window.location.href = 'login.html';
+    await fetch('api/login.php?action=logout', { cache: 'no-store' });
+    window.location.replace('http://192.168.16.240:8033/official-login.php?v=20261027-login-return');
 }
 async function deleteEmployee(id) {
     if (confirm('確定移除此員工設定嗎？')) {
@@ -435,21 +460,31 @@ async function searchContacts(resetPage = true) {
         document.getElementById('contact-prev-btn').disabled = currentContactPage <= 1;
         document.getElementById('contact-next-btn').disabled = currentContactPage >= totalContactPages;
 
+        if (!res.data.length) {
+            const cell = tbody.insertRow().insertCell(); cell.colSpan = 24; cell.textContent = '沒有符合條件的人員資料。';
+        }
         res.data.forEach(c => {
             const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>${c.church_id}</td>
-                <td>${c.name}</td>
-                <td>${c.gender || '-'}</td>
-                <td>${c.phone_num || '-'}</td>
-                <td>${c.section || '-'}/${c.family1 || '-'}</td>
-                <td>
-                    <button class="btn btn-sm" onclick='editContact(${JSON.stringify(c).replace(/'/g, "&apos;")})' style="background:var(--secondary); color:white; margin-right:5px;">👁️ 檢視/編輯</button>
-                    <button class="btn btn-sm" onclick="printQRCode('${c.church_id}', '${c.name}')" style="background:var(--primary); color:white; margin-right:5px;">🖨️ 列印</button>
-                </td>
-            `;
-            tbody.appendChild(tr);
+            const code = (field, map) => map[c[field]] || c[field];
+            const note = String(c.note || '');
+            const emergency = note.match(/\[緊急聯絡人:\s*(.*?)\s*\((.*?)\)\s*([^\]]*)\]/);
+            const visitors = [...note.matchAll(/[（(]訪客資訊[:：]([^）)]*)[）)]/g)].map(m => m[1].trim());
+            const birth = String(c.birthday || '').match(/^(\d{4})-(\d{2})-(\d{2})/);
+            const values = [c.church_id,c.name,
+                code('gender',{M:'男',m:'男',F:'女',f:'女',male:'男',female:'女'}),
+                code('marriage',{m:'已婚',M:'已婚',s:'未婚',S:'未婚',yes:'已婚',no:'未婚'}),
+                birth ? '民國 '+(Number(birth[1])-1911)+'/'+birth[2]+'/'+birth[3] : c.birthday,
+                c.phone_h,c.phone_o,c.mobile1,c.address,c.email1,
+                code('baptized',{y:'已受洗',Y:'已受洗',n:'未受洗',N:'未受洗',yes:'已受洗',no:'未受洗'}),
+                c.section,c.family1,c.family_id,[c.visitor_info,...visitors].filter(Boolean).join('；'),
+                emergency?.[1],emergency?.[3]?.trim(),emergency?.[2],c.note,
+                String(c.join_date || '').slice(0,10),String(c.dataindate || '').slice(0,10),c.car_number,c.line_id];
+            values.forEach(value => { const td=tr.insertCell(); td.textContent=value === null || value === undefined || value === '' ? '未填寫' : String(value); });
+            const actions=document.createElement('td');
+            const edit=document.createElement('button'); edit.className='btn btn-sm'; edit.textContent='編輯'; edit.onclick=()=>editContact(c);
+            actions.append(edit); tr.insertBefore(actions,tr.children[2]); tbody.appendChild(tr);
         });
+
     }
 }
 

@@ -1,0 +1,40 @@
+<?php
+session_start();
+header('Content-Type: application/json');
+
+// 預設密碼
+$ADMIN_PASSWORD = '__PRIVATE_BACKUP_ONLY__';
+
+$rawData = file_get_contents("php://input");
+$data = json_decode($rawData, true);
+
+$action = isset($_GET['action']) ? $_GET['action'] : ($data['action'] ?? '');
+
+switch ($action) {
+    case 'login':
+        $password = $data['password'] ?? '';
+        if ($password === $ADMIN_PASSWORD) {
+            $_SESSION['admin_logged_in'] = true;
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'message' => '密碼錯誤']);
+        }
+        break;
+        
+    case 'logout':
+        session_destroy();
+        echo json_encode(['success' => true]);
+        break;
+        
+    case 'check':
+        if (isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'] === true) {
+            echo json_encode(['success' => true]);
+        } else {
+            echo json_encode(['success' => false, 'message' => '未登入']);
+        }
+        break;
+        
+    default:
+        echo json_encode(['success' => false, 'message' => '未知的操作']);
+}
+?>

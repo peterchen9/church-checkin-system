@@ -1,353 +1,704 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>編輯通訊錄 - 智慧報到系統後台</title>
-    <link rel="stylesheet" href="style_admin.css">
-    <style>
-        body { background-color: var(--bg-light); padding: 20px; display: flex; justify-content: center; align-items: flex-start; }
-        .form-container { background: white; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); padding: 30px; width: 100%; max-width: 600px; margin-top: 20px; }
-        .form-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 1px solid #eee; padding-bottom: 15px; }
-        .form-header h2 { margin: 0; color: var(--text-dark); }
-        .back-btn { background: var(--bg-light); color: var(--text-dark); border: 1px solid #ccc; padding: 8px 15px; border-radius: 4px; cursor: pointer; font-size: 14px; text-decoration: none; }
-        .back-btn:hover { background: #eee; }
-        .form-group { margin-bottom: 15px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 500; color: #4B5563; }
-        .form-group input, .form-group select { width: 100%; padding: 10px; border: 1px solid #D1D5DB; border-radius: 6px; box-sizing: border-box; }
-        .row { display: flex; gap: 15px; }
-        .col { flex: 1; }
-        .submit-btn { width: 100%; padding: 12px; background: var(--primary); color: white; border: none; border-radius: 6px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 20px; }
-        .submit-btn:hover { opacity: 0.9; }
-    </style>
-</head>
-<body>
+<html lang="zh-Hant"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<script src="/admin-entry.js?v=20261027-simple-url"></script><title>新朋友登記</title><style>
+    /* Dark Theme styling for New Friends page */
+    .friends-container {
+        padding: 30px;
+        font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
 
-<div class="form-container" style="max-width: 800px;">
-    <div class="form-header">
-        <h2 id="page-title">新朋友登記</h2>
-        <a href="admin.html?tab=contacts" class="back-btn">回上一頁</a>
-    </div>
+    .friends-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 30px;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
 
-    <input type="hidden" id="contact-church-id">
+    .friends-title {
+        margin: 0;
+        font-family: 'Outfit', sans-serif;
+        font-size: 2.2rem;
+        background: linear-gradient(135deg, #fff 0%, var(--accent-color) 100%);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
 
-    <h3 style="color: var(--text-dark); margin-top: 0;">基本資料</h3>
-    <hr style="border: 0; border-top: 1px solid #eee; margin-bottom: 20px;">
+    .friends-count-badge {
+        font-size: 1rem;
+        padding: 4px 10px;
+        border-radius: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        color: var(--accent-color);
+        vertical-align: middle;
+        font-weight: 500;
+    }
+
+    .friends-actions {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+    }
+
+    .btn-premium {
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+        box-shadow: 0 4px 15px rgba(29, 78, 216, 0.3);
+        transition: all 0.2s;
+        font-size: 0.9rem;
+    }
+
+    .btn-premium:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(29, 78, 216, 0.4);
+        filter: brightness(1.1);
+        color: white;
+    }
+
+    .btn-success-premium {
+        background: linear-gradient(135deg, #10b981 0%, #047857 100%);
+        box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+    }
     
-    <div class="row" style="margin-bottom: 24px;">
-        <div style="width: 120px; height: 160px; border: 1px solid #ccc; border-radius: 8px; background: #f3f4f6; display: flex; align-items: center; justify-content: center; overflow: hidden; position: relative;">
-            <img id="photo-preview" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-            <span id="photo-placeholder" style="font-size: 40px; color: #9ca3af;">👤</span>
-        </div>
-        <div class="col" style="margin-left: 20px; display: flex; flex-direction: column; justify-content: center;">
-            <div style="font-weight: bold; margin-bottom: 8px; color: var(--text-dark);">拍照 / 上傳或貼上照片</div>
-            <div style="color: #6b7280; font-size: 14px; margin-bottom: 10px;">您可以點擊下方按鈕拍照/上傳，或直接在此頁面按下 Ctrl+V 貼上截圖。</div>
-            <button type="button" class="back-btn" style="margin-bottom: 10px; width: fit-content;" onclick="document.getElementById('camera-input').click()">📷 開啟相機 / 上傳圖片</button>
-            <input type="file" id="camera-input" accept="image/*" capture="environment" style="display:none;" onchange="handleCameraUpload(event)">
-            <a href="javascript:void(0)" onclick="removePhoto()" id="remove-photo-btn" style="color: red; display: none; text-decoration: none;">移除照片</a>
-        </div>
-    </div>
-    
-    <div class="form-group">
-        <label>姓名 *</label>
-        <input type="text" id="contact-name" placeholder="請輸入姓名">
-    </div>
-    
-    <div class="row">
-        <div class="col form-group">
-            <label>性別</label>
-            <div class="radio-group" style="display:flex; gap:15px; margin-top:8px;">
-                <label><input type="radio" name="gender" value="男"> 男</label>
-                <label><input type="radio" name="gender" value="女"> 女</label>
-                <label><input type="radio" name="gender" value="未填寫" checked> 未填寫</label>
+    .btn-success-premium:hover {
+        box-shadow: 0 6px 20px rgba(16, 185, 129, 0.3);
+        filter: brightness(1.1);
+        color: white;
+    }
+
+    /* Accordion Collapse Card for Excel Export */
+    .collapse-card {
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 12px;
+        padding: 20px;
+        margin-bottom: 25px;
+    }
+
+    /* Table Container styling */
+    .table-card {
+        background: rgba(255, 255, 255, 0.02);
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+        margin-bottom: 25px;
+    }
+
+    .table-card-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.01);
+    }
+
+    .table-card-title {
+        font-size: 1.15rem;
+        font-weight: 600;
+        margin: 0;
+        color: #f8fafc;
+    }
+
+    .friends-table {
+        width: 100%;
+        border-collapse: collapse;
+        text-align: left;
+    }
+
+    .friends-table th, .friends-table td {
+        padding: 12px 16px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        vertical-align: middle;
+    }
+
+    .friends-table th {
+        background: rgba(255, 255, 255, 0.02);
+        font-weight: 600;
+        color: var(--text-secondary);
+        font-size: 0.85rem;
+        text-transform: uppercase;
+        letter-spacing: 0.5px;
+    }
+
+    .friends-table tbody tr {
+        transition: background-color 0.2s;
+    }
+
+    .friends-table tbody tr:hover {
+        background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    .avatar-thumbnail {
+        width: 38px;
+        height: 38px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1.5px solid rgba(255, 255, 255, 0.15);
+        background-color: rgba(255, 255, 255, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #94a3b8;
+    }
+
+    .friend-name-link {
+        color: var(--accent-color);
+        font-weight: 600;
+        text-decoration: none;
+        cursor: pointer;
+        transition: color 0.2s;
+        border: none;
+        background: none;
+        padding: 0;
+        font-size: 0.95rem;
+    }
+
+    .friend-name-link:hover {
+        color: #ffffff;
+        text-decoration: underline;
+    }
+
+    /* Attendance blocks inline */
+    .attendance-blocks-inline {
+        display: flex;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 3px;
+        max-width: 250px;
+    }
+
+    .att-square {
+        display: inline-block;
+        width: 6px;
+        height: 12px;
+        border-radius: 1px;
+    }
+
+    .att-square.attended {
+        background-color: #10b981; /* Green */
+        box-shadow: 0 0 4px rgba(16, 185, 129, 0.4);
+    }
+
+    .att-square.absent {
+        background-color: #3b4e68; /* Blue Gray */
+    }
+
+    .att-group-divider {
+        display: inline-block;
+        width: 4px;
+    }
+
+    /* Pagination */
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+        margin-top: 20px;
+    }
+
+    .pagination-bar {
+        display: flex;
+        gap: 5px;
+    }
+
+    .pagination-btn {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        color: var(--text-secondary);
+        padding: 8px 14px;
+        border-radius: 8px;
+        text-decoration: none;
+        transition: all 0.2s;
+        font-size: 0.85rem;
+    }
+
+    .pagination-btn:hover {
+        background: rgba(255, 255, 255, 0.1);
+        color: #ffffff;
+    }
+
+    .pagination-btn.active {
+        background: #3b82f6;
+        border-color: #3b82f6;
+        color: white;
+        font-weight: 600;
+    }
+
+    /* Modal Styling */
+    .modal-backdrop-custom {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100vw;
+        height: 100vh;
+        background-color: rgba(13, 21, 39, 0.8);
+        backdrop-filter: blur(4px);
+        z-index: 1050;
+        display: none;
+        align-items: center;
+        justify-content: center;
+        padding: 20px;
+    }
+
+    .modal-backdrop-custom.show {
+        display: flex;
+    }
+
+    .modal-container-custom {
+        background-color: #131c2e;
+        border: 1px solid #223049;
+        border-radius: 16px;
+        width: 100%;
+        max-width: 650px;
+        max-height: 90vh;
+        overflow-y: auto;
+        position: relative;
+        padding: 28px;
+        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.5);
+        color: #ffffff;
+    }
+
+    .modal-header-custom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 1px solid #223049;
+        padding-bottom: 15px;
+        margin-bottom: 20px;
+    }
+
+    .modal-title-custom {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: #f8fafc;
+        margin: 0;
+    }
+
+    .modal-close-custom {
+        color: #94a3b8;
+        background: none;
+        border: none;
+        font-size: 1.5rem;
+        cursor: pointer;
+        transition: color 0.2s;
+    }
+
+    .modal-close-custom:hover {
+        color: #f8fafc;
+    }
+
+    /* Forms inside Modals */
+    .form-group-custom {
+        margin-bottom: 16px;
+    }
+
+    .form-label-custom {
+        font-weight: 600;
+        font-size: 0.85rem;
+        color: #94a3b8;
+        margin-bottom: 6px;
+        display: block;
+    }
+
+    .form-input-text {
+        width: 100%;
+        background-color: #1e293b;
+        color: #ffffff;
+        border: 1px solid #334155;
+        border-radius: 8px;
+        padding: 10px 14px;
+        font-size: 0.9rem;
+        outline: none;
+        box-shadow: none;
+        transition: border-color 0.2s;
+        box-sizing: border-box;
+    }
+
+    .form-input-text:focus {
+        border-color: #3b82f6;
+    }
+
+    .form-input-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px;
+    }
+
+    @media (max-width: 576px) {
+        .form-input-row {
+            grid-template-columns: 1fr;
+            gap: 12px;
+        }
+    }
+
+    .radio-options-row {
+        display: flex;
+        gap: 16px;
+        margin-top: 4px;
+        flex-wrap: wrap;
+    }
+
+    .radio-option-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+        cursor: pointer;
+        font-size: 0.88rem;
+        color: #cbd5e1;
+        user-select: none;
+    }
+
+    .radio-option-item input {
+        width: 16px;
+        height: 16px;
+        cursor: pointer;
+    }
+
+    /* Clipboard Paste Photo Box */
+    .paste-photo-container {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        background-color: #0f172a;
+        border: 2px dashed #334155;
+        border-radius: 8px;
+        padding: 14px;
+        margin-bottom: 20px;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+
+    .paste-photo-container:hover {
+        border-color: #3b82f6;
+        background-color: rgba(59, 130, 246, 0.05);
+    }
+
+    .paste-photo-preview {
+        width: 70px;
+        height: 90px;
+        object-fit: cover;
+        border-radius: 6px;
+        border: 1.5px solid #334155;
+        background-color: #1e293b;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #64748b;
+        font-size: 1.8rem;
+        flex-shrink: 0;
+    }
+
+    .paste-photo-preview img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 6px;
+    }
+
+    .paste-photo-text {
+        flex-grow: 1;
+    }
+
+    .paste-photo-title {
+        font-weight: 700;
+        font-size: 0.9rem;
+        color: #cbd5e1;
+        margin-bottom: 4px;
+    }
+
+    .paste-photo-desc {
+        font-size: 0.76rem;
+        color: #64748b;
+        line-height: 1.4;
+    }
+
+    .checkbox-list {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-top: 6px;
+    }
+
+    .checkbox-item {
+        display: flex;
+        align-items: flex-start;
+        gap: 8px;
+        cursor: pointer;
+        font-size: 0.88rem;
+        color: #cbd5e1;
+        user-select: none;
+    }
+
+    .checkbox-item input {
+        width: 16px;
+        height: 16px;
+        margin-top: 2px;
+        cursor: pointer;
+    }
+
+    .modal-actions {
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+        margin-top: 25px;
+    }
+
+    .btn-modal {
+        padding: 10px 18px;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.2s;
+    }
+
+    .btn-modal-primary {
+        background-color: #2563eb;
+        color: white;
+        border: none;
+    }
+
+    .btn-modal-primary:hover {
+        background-color: #1d4ed8;
+    }
+
+    .btn-modal-secondary {
+        background-color: transparent;
+        color: #cbd5e1;
+        border: 1px solid #334155;
+    }
+
+    .btn-modal-secondary:hover {
+        background-color: rgba(255, 255, 255, 0.05);
+        color: #ffffff;
+    }
+    .registration-birthday-row { display:grid; grid-template-columns:minmax(0,1.4fr) auto minmax(0,1fr) auto minmax(0,1fr) auto; gap:8px; align-items:center; }
+    .registration-birthday-row input { min-width:0; padding-left:8px; padding-right:8px; }
+    .registration-membership-row { display:grid; grid-template-columns:minmax(0,1fr); gap:16px; }
+    .registration-membership-row.has-groups { grid-template-columns:repeat(2,minmax(0,1fr)); }
+    #contact-group-field[hidden] { display:none; }
+    .registration-form-error { color:#fca5a5; padding:10px 0; }
+    @media(max-width:576px) { .registration-membership-row.has-groups { grid-template-columns:minmax(0,1fr); } }
+
+* { box-sizing:border-box; }
+body { margin:0; padding:24px 16px; background:#0f172a; color:#f8fafc; font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","Microsoft JhengHei",sans-serif; }
+.d-flex { display:flex; } .gap-2 { gap:8px; } .text-center { text-align:center; } .text-muted { color:#94a3b8; } .align-self-center { align-self:center; }
+.modal-container-custom.unified-contact-card { max-width:650px; width:100%; max-height:none; overflow:visible; margin:0 auto; }
+.photo-remove-link { border:0;background:none;color:#fca5a5;padding:6px 0;cursor:pointer; }
+.cancel-link { text-decoration:none;text-align:center; }
+#contact-edit-extra[hidden],#contact-group-field[hidden] { display:none; }
+@media(max-width:576px){ body{padding:12px;} }
+</style></head><body>
+<main class="modal-container-custom unified-contact-card"><header class="modal-header-custom"><h3 class="modal-title-custom" id="page-title">登記新朋友</h3><a class="modal-close-custom cancel-link" href="admin.html?tab=contacts" aria-label="返回通訊錄">×</a></header>
+<form id="contactForm" onsubmit="event.preventDefault();saveContact()"><input type="hidden" id="contact-church-id">
+
+            
+            
+
+            <div class="paste-photo-container" onclick="document.getElementById('camera-input').click()" title="貼上照片 (Ctrl+V) 或點選上傳檔案">
+                <div class="paste-photo-preview">
+                    <img id="photo-preview" alt="照片預覽" style="display:none;">
+                    <span id="photo-placeholder" aria-hidden="true">＋</span>
+                </div>
+                <div class="paste-photo-text">
+                    <div class="paste-photo-title">貼上/上傳照片</div>
+                    <div class="paste-photo-desc">點選此處並按下 Ctrl+V 貼上剪貼簿中的照片，或點此選擇檔案。</div>
+                    <button type="button" id="remove-photo-btn" class="photo-remove-link" onclick="event.stopPropagation();removePhoto()" style="display:none;">移除照片</button>
+                </div>
+                <input type="file" id="camera-input" accept="image/jpeg,image/png,image/webp" capture="environment" style="display:none;" onchange="handleCameraUpload(event)">
             </div>
-        </div>
-        <div class="col form-group">
-            <label>婚姻</label>
-            <div class="radio-group" style="display:flex; gap:15px; margin-top:8px;">
-                <label><input type="radio" name="marriage" value="已婚"> 已婚</label>
-                <label><input type="radio" name="marriage" value="未婚"> 未婚</label>
-                <label><input type="radio" name="marriage" value="未填寫" checked> 未填寫</label>
-            </div>
-        </div>
-    </div>
-    
-    <div class="form-group">
-        <label>生日</label>
-        <input type="date" id="contact-birthday">
-    </div>
-    
-    <div class="row">
-        <div class="col form-group">
-            <label>電話 (H)</label>
-            <input type="text" id="contact-phone_h">
-        </div>
-        <div class="col form-group">
-            <label>電話 (O)</label>
-            <input type="text" id="contact-phone_o">
-        </div>
-    </div>
-    
-    <div class="form-group">
-        <label>手機</label>
-        <input type="text" id="contact-mobile">
-    </div>
-    
-    <div class="form-group">
-        <label>地址</label>
-        <input type="text" id="contact-address">
-    </div>
-    
-    <div class="form-group">
-        <label>E-mail</label>
-        <input type="email" id="contact-email">
-    </div>
-    
-    <div class="form-group">
-        <label>受洗</label>
-        <div class="radio-group" style="display:flex; gap:15px; margin-top:8px;">
-            <label><input type="radio" name="baptized" value="已受洗"> 已受洗</label>
-            <label><input type="radio" name="baptized" value="慕道友"> 慕道友</label>
-            <label><input type="radio" name="baptized" value="未填寫" checked> 未填寫</label>
-        </div>
-    </div>
 
-    <div class="form-group">
-        <label>牧區 (CMS26不含此欄，報到系統保留)</label>
-        <input type="text" id="contact-section">
+<div class="portrait-adjuster" id="newFriendPhotoEditor" hidden>
+    <p data-photo-error role="alert" hidden></p>
+    <div data-photo-panel hidden>
+        <canvas width="300" height="370" tabindex="0" aria-label="照片裁切預覽，可拖曳或以方向鍵移動照片"></canvas>
+        <label for="newFriendPhotoZoom">縮小／放大 <output>100%</output></label>
+        <input id="newFriendPhotoZoom" data-photo-zoom type="range" min="1" max="4" step="0.01" value="1" aria-label="照片放大倍率">
+        <p>拖曳照片調整位置，預覽框內即為儲存範圍。</p>
+        <button type="button" data-photo-center class="btn-modal btn-modal-secondary">重新置中</button>
     </div>
-    <div class="form-group">
-        <label>小組 (CMS26不含此欄，報到系統保留)</label>
-        <input type="text" id="contact-family1">
-    </div>
-
-    <div class="form-group" style="margin-top: 20px;">
-        <label style="font-size: 16px; font-weight: bold; color: var(--text-dark);">訪客資訊</label>
-        <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;" id="visitor-info-container">
-            <label><input type="checkbox" value="我不是基督徒，願進一步了解基督教"> 我不是基督徒，願進一步了解基督教</label>
-            <label><input type="checkbox" value="我尚未受洗，願參加慕道班明白真理"> 我尚未受洗，願參加慕道班明白真理</label>
-            <label><input type="checkbox" value="我是基督徒，因臨時需要而參加貴堂之聚會"> 我是基督徒，因臨時需要而參加貴堂之聚會</label>
-            <label><input type="checkbox" value="我是基督徒，我目前還沒固定參加哪一個教會"> 我是基督徒，我目前還沒固定參加哪一個教會</label>
-            <label><input type="checkbox" value="我是基督徒，今後可能經常參加貴堂之聚會"> 我是基督徒，今後可能經常參加貴堂之聚會</label>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label>附註</label>
-        <textarea id="contact-note" rows="3" style="width: 100%; padding: 10px; border: 1px solid #D1D5DB; border-radius: 6px; box-sizing: border-box;"></textarea>
-    </div>
-    
-    <div class="row">
-        <div class="col form-group">
-            <label>來教會日期</label>
-            <input type="date" id="contact-join_date">
-        </div>
-        <div class="col form-group">
-            <label>輸入資料日期</label>
-            <input type="date" id="contact-dataindate">
-        </div>
-    </div>
-    
-    <div class="row">
-        <div class="col form-group">
-            <label>車號 (多個用逗號分隔)</label>
-            <input type="text" id="contact-car_number">
-        </div>
-        <div class="col form-group">
-            <label>LINE ID</label>
-            <input type="text" id="contact-line_id">
-        </div>
-    </div>
-
-    <button class="submit-btn" onclick="saveContact()">送出新增</button>
+    <button type="button" data-photo-clear class="btn-modal btn-modal-secondary">取消更換照片</button>
 </div>
+<style>
+.portrait-adjuster {margin:12px 0 20px;padding:14px;border:1px solid #475569;border-radius:8px;}
+.portrait-adjuster[hidden],.portrait-adjuster [hidden] {display:none;}
+.portrait-adjuster canvas {display:block;width:300px;max-width:100%;height:auto;aspect-ratio:150/185;touch-action:none;cursor:grab;background:#1e293b;border:2px solid #38bdf8;border-radius:8px;}
+.portrait-adjuster label {display:block;margin-top:10px;color:#e2e8f0;}
+.portrait-adjuster input[type=range] {display:block;width:300px;max-width:100%;padding:0;margin:10px 0;}
+.portrait-adjuster p {color:#94a3b8;font-size:13px;line-height:1.5;margin:8px 0;}
+.portrait-adjuster [data-photo-error] {color:#fca5a5;}
+.portrait-adjuster button {margin:5px 6px 0 0;}
+</style>
 
-<script>
-    let photoBase64 = null;
+            <!-- Name Field -->
+            <div class="form-group-custom">
+                <label class="form-label-custom">姓名 *</label>
+                <input type="text" name="name" class="form-input-text" placeholder="輸入姓名" required id="contact-name">
+            </div>
 
-    // Paste Image Logic
-    window.addEventListener('paste', e => {
-        if (e.clipboardData.files.length > 0) {
-            processFile(e.clipboardData.files[0]);
-        }
-    });
+            <!-- Gender & Marital Status -->
+            <div class="form-input-row form-group-custom">
+                <div>
+                    <label class="form-label-custom">性別</label>
+                    <div class="radio-options-row">
+                        <label class="radio-option-item"><input type="radio" name="gender" value="M"> 男</label>
+                        <label class="radio-option-item"><input type="radio" name="gender" value="F"> 女</label>
+                        <label class="radio-option-item"><input type="radio" name="gender" value="" checked> 未填寫</label>
+                    </div>
+                </div>
+                <div>
+                    <label class="form-label-custom">婚姻</label>
+                    <div class="radio-options-row">
+                        <label class="radio-option-item"><input type="radio" name="marriage" value="m"> 已婚</label>
+                        <label class="radio-option-item"><input type="radio" name="marriage" value="s"> 未婚</label>
+                        <label class="radio-option-item"><input type="radio" name="marriage" value="" checked> 未填寫</label>
+                    </div>
+                </div>
+            </div>
 
-    // Camera / File Upload Logic
-    function handleCameraUpload(event) {
-        if (event.target.files.length > 0) {
-            processFile(event.target.files[0]);
-        }
-    }
+            <!-- Birthday (ROC Year, Month, Day) -->
+            <div class="form-group-custom">
+                <label class="form-label-custom" id="contact-birthday-label">生日（民國）</label>
+                <div class="registration-birthday-row" role="group" aria-labelledby="contact-birthday-label">
+                    <input type="number" name="b_year" aria-label="民國出生年" class="form-input-text text-center" placeholder="民國年" min="1" max="150" id="contact-b_year">
+                    <span class="align-self-center text-muted" style="font-size: 0.85rem;">年</span>
+                    <input type="number" name="b_month" aria-label="出生月" class="form-input-text text-center" placeholder="月" min="1" max="12" id="contact-b_month">
+                    <span class="align-self-center text-muted" style="font-size: 0.85rem;">月</span>
+                    <input type="number" name="b_day" aria-label="出生日" class="form-input-text text-center" placeholder="日" min="1" max="31" id="contact-b_day">
+                    <span class="align-self-center text-muted" style="font-size: 0.85rem;">日</span>
+                </div>
+            </div>
 
-    function processFile(file) {
-        if (file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = event => {
-                const base64Data = event.target.result;
-                photoBase64 = base64Data;
-                document.getElementById('photo-preview').src = base64Data;
-                document.getElementById('photo-preview').style.display = 'block';
-                document.getElementById('photo-placeholder').style.display = 'none';
-                document.getElementById('remove-photo-btn').style.display = 'inline-block';
-            };
-            reader.readAsDataURL(file);
-        }
-    }
+            <!-- Home Phone & Office Phone -->
+            <div class="form-input-row form-group-custom">
+                <div>
+                    <label class="form-label-custom">電話 (H)</label>
+                    <input type="text" name="home_phone" class="form-input-text" placeholder="如 03-1234567" id="contact-phone_h">
+                </div>
+                <div>
+                    <label class="form-label-custom">電話 (O)</label>
+                    <input type="text" name="office_phone" class="form-input-text" placeholder="如 03-7654321" id="contact-phone_o">
+                </div>
+            </div>
 
-    function removePhoto() {
-        photoBase64 = null;
-        document.getElementById('photo-preview').style.display = 'none';
-        document.getElementById('photo-placeholder').style.display = 'block';
-        document.getElementById('remove-photo-btn').style.display = 'none';
-    }
+            <!-- Mobile Phone -->
+            <div class="form-group-custom">
+                <label class="form-label-custom">手機</label>
+                <input type="text" name="mobile_phone" class="form-input-text" placeholder="如 0912345678" id="contact-mobile">
+            </div>
 
-    function setRadioValue(name, value) {
-        if(!value) value = '未填寫';
-        const radios = document.getElementsByName(name);
-        for (let r of radios) {
-            r.checked = (r.value === value);
-        }
-    }
-    function getRadioValue(name) {
-        const checked = document.querySelector(`input[name="${name}"]:checked`);
-        let val = checked ? checked.value : '未填寫';
-        return val === '未填寫' ? '' : val;
-    }
+            <!-- Address -->
+            <div class="form-group-custom">
+                <label class="form-label-custom">地址</label>
+                <input type="text" name="home_address" class="form-input-text" placeholder="輸入完整地址" id="contact-address">
+            </div>
 
-    async function apiCall(action, payload = {}) {
-        const res = await fetch(`api/admin.php?action=${action}`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(payload)
-        });
-        return await res.json();
-    }
+            <!-- E-mail -->
+            <div class="form-group-custom">
+                <label class="form-label-custom">E-mail</label>
+                <input type="email" name="e_mail" class="form-input-text" placeholder="name@domain.com" id="contact-email">
+            </div>
 
-    async function initForm() {
-        const urlParams = new URLSearchParams(window.location.search);
-        const churchId = urlParams.get('id');
-        
-        // Defaults
-        document.getElementById('contact-join_date').value = new Date().toISOString().split('T')[0];
-        document.getElementById('contact-dataindate').value = new Date().toISOString().split('T')[0];
-        
-        if (churchId) {
-            document.getElementById('page-title').textContent = '檢視 / 編輯人員資料';
-            document.querySelector('.submit-btn').textContent = '儲存更新';
-            document.getElementById('contact-church-id').value = churchId;
+            <!-- Baptized Status -->
+            <div class="form-group-custom">
+                <label class="form-label-custom">受洗狀態</label>
+                <div class="radio-options-row">
+                    <label class="radio-option-item"><input type="radio" name="baptized" value="y"> 已受洗</label>
+                    <label class="radio-option-item"><input type="radio" name="baptized" value="n"> 慕道友</label>
+                    <label class="radio-option-item"><input type="radio" name="baptized" value="" checked> 未填寫</label>
+                </div>
+            </div>
+
+            <!-- Dates (ROC Format) -->
+            <div class="form-input-row form-group-custom">
+                <div>
+                    <label class="form-label-custom">聚會日期 (民國格式 Y-m-d)</label>
+                    <input type="text" name="joindate" class="form-input-text text-center" value="" id="contact-join_date">
+                </div>
+                <div>
+                    <label class="form-label-custom">填卡日期 (民國格式 Y-m-d)</label>
+                    <input type="text" name="dataindate" class="form-input-text text-center" value="" id="contact-dataindate">
+                </div>
+            </div>
+
+            <!-- Car License & Line ID -->
+            <div class="form-input-row form-group-custom">
+                <div>
+                    <label class="form-label-custom">車牌號碼</label>
+                    <input type="text" name="reserved2" class="form-input-text" placeholder="如 ABC-1234" id="contact-car_number">
+                </div>
+                <div>
+                    <label class="form-label-custom">Line ID</label>
+                    <input type="text" name="reserved3" class="form-input-text" placeholder="輸入 Line ID" id="contact-line_id">
+                </div>
+            </div>
+
+            <!-- Emergency Contact -->
+            <div class="form-group-custom">
+                <label class="form-label-custom">緊急聯絡人資訊</label>
+                <div class="d-flex gap-2">
+                    <input type="text" name="emer_contact_name" class="form-input-text" placeholder="姓名" style="width: 30%;" id="contact-emer_name">
+                    <input type="text" name="emer_contact_phone" class="form-input-text" placeholder="電話" style="width: 40%;" id="contact-emer_phone">
+                    <input type="text" name="emer_contact_relation" class="form-input-text" placeholder="關係" style="width: 30%;" id="contact-emer_relation">
+                </div>
+            </div>
+
+            <!-- Visitor Checkboxes -->
+            <div class="form-group-custom">
+                <label class="form-label-custom">訪客選項 (複選)</label>
+                <div class="checkbox-list" id="visitor-info-container">
+                    <label class="checkbox-item"><input type="checkbox" name="checkbox1" value="我不是基督徒，願進一步了解基督教"> 我不是基督徒，願進一步了解基督教</label>
+                    <label class="checkbox-item"><input type="checkbox" name="checkbox2" value="我尚未受洗，願參加慕道班明白真理"> 我尚未受洗，願參加慕道班明白真理</label>
+                    <label class="checkbox-item"><input type="checkbox" name="checkbox3" value="我是基督徒，因臨時需要而參加貴堂之聚會"> 我是基督徒，因臨時需要而參加貴堂之聚會</label>
+                    <label class="checkbox-item"><input type="checkbox" name="checkbox4" value="我是基督徒，我目前還沒有固定參加哪一個教會"> 我是基督徒，我目前還沒有固定參加哪一個教會</label>
+                    <label class="checkbox-item"><input type="checkbox" name="checkbox5" value="我是基督徒，今後可能經常參加貴堂之聚會"> 我是基督徒，今後可能經常參加貴堂之聚會</label>
+                </div>
+            </div>
+
+            <div class="form-group-custom registration-membership-row" id="contact-membership-row">
+                <div>
+                    <label class="form-label-custom" id="contact-section-label" for="contact-section">預歸屬牧區</label>
+                    <select name="planned_section_id" class="form-input-text" id="contact-section">
+                        <option value="">尚未決定</option>
+                        
+                    </select>
+                </div>
+                <div id="contact-group-field" hidden>
+                    <label class="form-label-custom" for="contact-family1">小家</label>
+                    <select name="planned_group_id" class="form-input-text" disabled id="contact-family1">
+                        <option value="">請選擇小家</option>
+                    </select>
+                </div>
+            </div>
             
-            // Fetch contact data
-            const res = await fetch(`api/admin.php?action=get_contact&church_id=${churchId}`);
-            const data = await res.json();
             
-            if (data.success) {
-                const contact = data.data;
-                document.getElementById('contact-name').value = contact.name || '';
-                setRadioValue('gender', contact.gender);
-                setRadioValue('marriage', contact.marriage);
-                document.getElementById('contact-birthday').value = contact.birthday || '';
-                document.getElementById('contact-phone_h').value = contact.phone_h || '';
-                document.getElementById('contact-phone_o').value = contact.phone_o || '';
-                document.getElementById('contact-mobile').value = contact.phone_num || '';
-                document.getElementById('contact-address').value = contact.address || '';
-                document.getElementById('contact-email').value = contact.email || '';
-                setRadioValue('baptized', contact.baptized);
-                document.getElementById('contact-section').value = contact.section || '';
-                document.getElementById('contact-family1').value = contact.family1 || '';
-                document.getElementById('contact-note').value = contact.note || '';
-                if(contact.join_date) document.getElementById('contact-join_date').value = contact.join_date;
-                if(contact.dataindate) document.getElementById('contact-dataindate').value = contact.dataindate.split(' ')[0];
-                document.getElementById('contact-car_number').value = contact.car_number || '';
-                document.getElementById('contact-line_id').value = contact.line_id || '';
-                
-                // Set visitor info
-                const visitorInfos = (contact.visitor_info || '').split(',').map(s => s.trim());
-                const checkboxes = document.querySelectorAll('#visitor-info-container input[type="checkbox"]');
-                checkboxes.forEach(cb => {
-                    if (visitorInfos.includes(cb.value)) cb.checked = true;
-                });
-                
-                // base64 photo viewing from db
-                if (contact.photo_base64) {
-                    photoBase64 = contact.photo_base64;
-                    document.getElementById('photo-preview').src = photoBase64;
-                    document.getElementById('photo-preview').style.display = 'block';
-                    document.getElementById('photo-placeholder').style.display = 'none';
-                    document.getElementById('remove-photo-btn').style.display = 'inline-block';
-                } else {
-                    // Try fetching from ContactsDB using our backend
-                    const img = new Image();
-                    img.onload = function() {
-                        document.getElementById('photo-preview').src = this.src;
-                        document.getElementById('photo-preview').style.display = 'block';
-                        document.getElementById('photo-placeholder').style.display = 'none';
-                    };
-                    img.src = 'api/admin.php?action=get_original_photo&church_id=' + churchId;
-                }
-            } else {
-                alert('無法讀取該會友資料');
-                window.location.href = 'admin.html?tab=contacts';
-            }
-        }
-    }
 
-    async function saveContact() {
-        const name = document.getElementById('contact-name').value.trim();
-        if (!name) return alert('姓名為必填欄位');
+            <!-- Note -->
+            <div class="form-group-custom">
+                <label class="form-label-custom">其他備註</label>
+                <textarea name="note" class="form-input-text" rows="3" placeholder="請輸入備註..." id="contact-note"></textarea>
+            </div>
 
-        const churchId = document.getElementById('contact-church-id').value;
-        const action = churchId ? 'update_contact' : 'add_contact';
-        
-        // Gather visitor info
-        const visitorInfoSelected = [];
-        document.querySelectorAll('#visitor-info-container input[type="checkbox"]:checked').forEach(cb => {
-            visitorInfoSelected.push(cb.value);
-        });
-
-        const payload = {
-            church_id: churchId,
-            name: name,
-            gender: getRadioValue('gender'),
-            marriage: getRadioValue('marriage'),
-            birthday: document.getElementById('contact-birthday').value || null,
-            phone_h: document.getElementById('contact-phone_h').value,
-            phone_o: document.getElementById('contact-phone_o').value,
-            mobile: document.getElementById('contact-mobile').value,
-            address: document.getElementById('contact-address').value,
-            email: document.getElementById('contact-email').value,
-            baptized: getRadioValue('baptized'),
-            section: document.getElementById('contact-section').value,
-            family1: document.getElementById('contact-family1').value,
-            visitor_info: visitorInfoSelected.join(', '),
-            note: document.getElementById('contact-note').value,
-            join_date: document.getElementById('contact-join_date').value || null,
-            dataindate: document.getElementById('contact-dataindate').value || null,
-            car_number: document.getElementById('contact-car_number').value,
-            line_id: document.getElementById('contact-line_id').value,
-            photo_base64: photoBase64
-        };
-
-        const btn = document.querySelector('.submit-btn');
-        btn.disabled = true;
-        btn.textContent = '儲存中...';
-
-        const res = await apiCall(action, payload);
-        if (res.success) {
-            if (!churchId) {
-                alert('新增成功！會友編號為：' + res.new_church_id);
-            } else {
-                alert('更新成功！');
-            }
-            window.location.href = 'admin.html?tab=contacts';
-        } else {
-            alert('錯誤: ' + res.message);
-            btn.disabled = false;
-            btn.textContent = '儲存設定';
-        }
-    }
-
-    window.onload = initForm;
-</script>
-
-</body>
-</html>
+            <div id="contact-edit-extra" hidden>
+                <div class="form-group-custom"><label class="form-label-custom" for="contact-family_id">家庭 ID</label><input type="text" inputmode="numeric" id="contact-family_id" class="form-input-text"></div>
+                <p id="attendance-summary" class="paste-photo-desc"></p>
+            </div>
+            <div class="modal-actions">
+                <a href="admin.html?tab=contacts" class="btn-modal btn-modal-secondary cancel-link">取消</a>
+                <button type="submit" class="btn-modal btn-modal-primary submit-btn">送出登記</button>
+            </div>
+        </form></main>
+<script src="portrait-adjuster.js?v=20261107"></script>
+<script src="registration-membership.js?v=20261107-layout2"></script><script src="contact-form.js?v=20261107-photo"></script></body></html>

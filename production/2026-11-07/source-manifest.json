@@ -1,0 +1,361 @@
+{
+  "captured_date": "2026-11-07",
+  "source_files": [
+    {
+      "source": "/home/peterchen/church_checkin/insert_menu.py",
+      "path": "checkin-php/insert_menu.py",
+      "sha256": "05695e88eb7f651f6425e4e2b21d892cde327b6f87e71dc0880e81f04a18cff6"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/test.php",
+      "path": "checkin-php/test.php",
+      "sha256": "ed5b5723c3971e6553b927eb6d380dfd98678a203df35e908afd14e4f00c9f02"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/admin.html",
+      "path": "checkin-php/admin.html",
+      "sha256": "7e68da52d555928c0a4768320bb44172699caf4681a87172900124a7ff3b7931"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/scratch_cms26.php",
+      "path": "checkin-php/scratch_cms26.php",
+      "sha256": "d64cff83e9d668f786dc1e153e007e3b17887e53e4d47173de14e213e6dc9a5a"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/check_tables.php",
+      "path": "checkin-php/check_tables.php",
+      "sha256": "557b18bf74ae26705c97a6892e8e046ee543353e3fbde239d4ece944207220a2"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/check_schema.php",
+      "path": "checkin-php/check_schema.php",
+      "sha256": "25aedc39deb91fdc5fd5f7f3ab45ee0948c6ad994b60c4e8324c516d42b6b47e"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/app.js",
+      "path": "checkin-php/app.js",
+      "sha256": "69b463d2d8c7f8005337239999aace679e45233eba86db96e6c94e4924f4142f"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/portrait-adjuster.js",
+      "path": "checkin-php/portrait-adjuster.js",
+      "sha256": "ecc985a4e1961cf66f44b0261b959e6022698a2c10f378ad5cd9c6458ef277b4"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/official-login.php",
+      "path": "checkin-php/official-login.php",
+      "sha256": "9538fa657760ddbec6047d8dfa7a060d7f181f528348f4b86c9938c3e052320d"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/check_db.py",
+      "path": "checkin-php/check_db.py",
+      "sha256": "d0116beb70d606dcb6c14b240cf929b07088a5d68cd2343b856acbad4ee7bf86"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/contact-form.js",
+      "path": "checkin-php/contact-form.js",
+      "sha256": "b5cec1602945248d8b2801385879e9d17139baaf1744fddfe9254da976d46cad"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/api/login.php",
+      "path": "checkin-php/api/login.php",
+      "sha256": "ee04a0e2caa4abd536c9827b89b160e9159e69b40ecddf07cd1810eb5699528c"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/api/course_catalog.php",
+      "path": "checkin-php/api/course_catalog.php",
+      "sha256": "21d3b92b186daa0b16db3f57cccd54cf52de6547710c60b59c2a0322c376f159"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/api/sections.php",
+      "path": "checkin-php/api/sections.php",
+      "sha256": "feaf0fe0a169445be79ebb5c350deb303f1a033dd24848b3bf79b9214f270f44"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/api/events.php",
+      "path": "checkin-php/api/events.php",
+      "sha256": "69c055403eda5ec44a3f93eb43269b41b6f79ff0c0090df155f4e96a14fea734"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/api/contact_directory.php",
+      "path": "checkin-php/api/contact_directory.php",
+      "sha256": "052c40f7fcce6271b031a3ad56feeca4a6815746698ed162905e920a55d57599"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/api/registration_membership.php",
+      "path": "checkin-php/api/registration_membership.php",
+      "sha256": "b33b39600ea8a291224e221bf19a370d384a976ac075afeb75d9be22e58c17c1"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/api/checkin.php",
+      "path": "checkin-php/api/checkin.php",
+      "sha256": "8a36ba0da6741649553995a7a0db7a69c242808d8c0195493cfe73f6b1a45a86"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/api/admin.php",
+      "path": "checkin-php/api/admin.php",
+      "sha256": "ea739b9c88c7f2c4f5d6370aa321971e43c742f006855c78e0ef19608ccf4767"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/admin.js",
+      "path": "checkin-php/admin.js",
+      "sha256": "ca8ecc484e0523a81784806c26ae116ba9eadd64d48c8de4bfcb4c824daf3bac"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/test2.php",
+      "path": "checkin-php/test2.php",
+      "sha256": "a2257f7b55661bd57fe062bb008edd83d52de76922fe533b8ff055c1baec59c1"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/query_menu.py",
+      "path": "checkin-php/query_menu.py",
+      "sha256": "80398141a3aea3adb091e7dbd429fa809921da0b3d182270de08ae656351fb6f"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/contact_form.html",
+      "path": "checkin-php/contact_form.html",
+      "sha256": "4f346a3e8a81887efe1559bda147830ee35316250cc861850fadb524e2d90b0c"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/sunday.html",
+      "path": "checkin-php/sunday.html",
+      "sha256": "a05b081404f29269e24c10c17e3876b490032552fb20fec0f52ab6de6ac02852"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/index.html",
+      "path": "checkin-php/index.html",
+      "sha256": "f3e0126137644f604f11b3fc460584fd9c67e03a0e6611311cacd71aafd0452f"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/scratch_db.php",
+      "path": "checkin-php/scratch_db.php",
+      "sha256": "17acc5ed1c286210e375a5efdbb1d0603454be4dbdb6504ebec4d01ed86aff43"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/style.css",
+      "path": "checkin-php/style.css",
+      "sha256": "06cf765500bae1413daed87a9eac5361b5603c771c6c62dbba4f6b93c7c638fa"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/login.html",
+      "path": "checkin-php/login.html",
+      "sha256": "f0c45d6929f07f0379eb735f767493128fcb09ea65f06dfdca3cc4b726d53e01"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/admin-entry.js",
+      "path": "checkin-php/admin-entry.js",
+      "sha256": "a8daeab1aaab474c5be7f2cc80a3f540fc81d8529f213323d4dc63fe2b39ddce"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/style_admin.css",
+      "path": "checkin-php/style_admin.css",
+      "sha256": "960644b0495e106bdb3f57b9c69e042c8f8a803b34677a2730d3fe93aad08a6e"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/registration-membership.js",
+      "path": "checkin-php/registration-membership.js",
+      "sha256": "a69f99914644ac4c5040f5df808f00d77bcdff0cd9c1e12a63a61b3cf422e721"
+    },
+    {
+      "source": "/home/peterchen/church_checkin/barcode-print.html",
+      "path": "checkin-php/barcode-print.html",
+      "sha256": "3e4013234e369da382382fde790796a71f7b24b1485adc66bb4e915cee212fd2"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/verify_service.py",
+      "path": "checkin-standalone/verify_service.py",
+      "sha256": "8fcf14dc952e5129983db93bdf7bae5afb7dbb3ab8cfdca942ef72f7c9e8b896"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/install-routing.py",
+      "path": "checkin-standalone/install-routing.py",
+      "sha256": "07997b6def16635e443d2468614e100aa013e9e6d8b9d1dd615f215ff23f2b80"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/static-ui/app.js",
+      "path": "checkin-standalone/static-ui/app.js",
+      "sha256": "bab81a196d9f5963bd36291a3430bb9ccf486cd984b763738faec6166cfd7692"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/static-ui/index.html",
+      "path": "checkin-standalone/static-ui/index.html",
+      "sha256": "a2979ade8727a7a96304c366d9104e60d79821c72f18cb75a2b19c7b29bb6003"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/static-ui/camera.js",
+      "path": "checkin-standalone/static-ui/camera.js",
+      "sha256": "3e0dfe0b3f83f3d8c6d6cf2fb79033769cc6b7119354e3efcb93a0653dc8a135"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/static-ui/style.css",
+      "path": "checkin-standalone/static-ui/style.css",
+      "sha256": "616da2b1e583990d2c3fd907ca2f3de5082d8d13c8b8e40cdfb26d0f0f0f5c86"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/routing_probe.py",
+      "path": "checkin-standalone/routing_probe.py",
+      "sha256": "71020d4915f2d2ec9cdc2eb27a9aaabce57cedaf0f60b83086e2449a2a4fa745"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/legacy_redirect.py",
+      "path": "checkin-standalone/legacy_redirect.py",
+      "sha256": "f0be9070814d5456f9a26315a82532d952a937c29b9c274af678c2b87ead03d5"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/templates/public_names.html",
+      "path": "checkin-standalone/app/templates/public_names.html",
+      "sha256": "40a386add8945fc394263348cf49b0dabd6193f93dccd53c9c9987861a086c1e"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/templates/eureka/sunday_records.html",
+      "path": "checkin-standalone/app/templates/eureka/sunday_records.html",
+      "sha256": "b700d9723c0d6a052a133d73f39492bf3360503c99b18263960f9adba3abafae"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/templates/eureka/barcode_print.html",
+      "path": "checkin-standalone/app/templates/eureka/barcode_print.html",
+      "sha256": "b89f613a78e524bc8e9e354a6e215df9d40ec1889e4f08f6200f96bb0f89810e"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/templates/eureka/sunday_base.html",
+      "path": "checkin-standalone/app/templates/eureka/sunday_base.html",
+      "sha256": "594ba11c93186b21a9e0b558a8188ab37e9d26cae0405d1ecb74bd482eb3c275"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/templates/eureka/barcode_search.html",
+      "path": "checkin-standalone/app/templates/eureka/barcode_search.html",
+      "sha256": "0c0d3a9d1e2b125095e64efc365ea44ce2512131ca4ec4639a61cf5c985d75ae"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/templates/eureka/barcode_labels.html",
+      "path": "checkin-standalone/app/templates/eureka/barcode_labels.html",
+      "sha256": "624fa261440db1026ae1624b6e946720731072dcb5acb86c76c24322770b6f36"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/templates/eureka/sunday_history.html",
+      "path": "checkin-standalone/app/templates/eureka/sunday_history.html",
+      "sha256": "75c12ef9497fe31e844d5bc30b6025e6a0f3a1d51f7797b78cec0c710e1c48e4"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/templates/eureka/sunday_checkin.html",
+      "path": "checkin-standalone/app/templates/eureka/sunday_checkin.html",
+      "sha256": "651bb46436728fcc80a4efed0941add4df4e5c058c561dd8bd3a1b029f5eecfa"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/templates/checkin_login.html",
+      "path": "checkin-standalone/app/templates/checkin_login.html",
+      "sha256": "aad3696935f4a6e53dbc56cf216dbd6fbf2329c4ccce776e3c01e5822f0499ed"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/standalone/wsgi.py",
+      "path": "checkin-standalone/app/standalone/wsgi.py",
+      "sha256": "91112b296782e6e1508149a19f4dcf006063b2936ab34c6a1376ac31680bab00"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/standalone/auth.py",
+      "path": "checkin-standalone/app/standalone/auth.py",
+      "sha256": "8d5eacf80c80a99d87e2447dcb8353589fb98e3b42a781e8114a57ded275242e"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/standalone/settings.py",
+      "path": "checkin-standalone/app/standalone/settings.py",
+      "sha256": "aa224d9b126bd0add85b9e58916484e572d31e3345faba8df2b37df219b5612e"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/standalone/__init__.py",
+      "path": "checkin-standalone/app/standalone/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/standalone/public_names.py",
+      "path": "checkin-standalone/app/standalone/public_names.py",
+      "sha256": "d713aea3ea9ca93ac94083b2a268fc2c4f8efbaabdd27741bce306578568022a"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/standalone/urls.py",
+      "path": "checkin-standalone/app/standalone/urls.py",
+      "sha256": "63179da0d69efb7de6209adbbbc3fbb446ab9f47084bd060f8e723ec75704f4d"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/modules/eureka/sunday_urls.py",
+      "path": "checkin-standalone/app/modules/eureka/sunday_urls.py",
+      "sha256": "527f6be7f8ee0ba962d1cced2100d9f88ddfc23a2a2d49a0ed26956a263a1804"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/modules/eureka/models.py",
+      "path": "checkin-standalone/app/modules/eureka/models.py",
+      "sha256": "567085e0d61ade0f28a2dce3aea996b3761deb824446b1f5835e6e9f8d74402f"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/modules/eureka/sunday_views.py",
+      "path": "checkin-standalone/app/modules/eureka/sunday_views.py",
+      "sha256": "12b7b2db0b1f4211981eb10450cba1bcb80904fdc2a8a21b72c494f41c29423f"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/modules/eureka/sunday_assets/app.js",
+      "path": "checkin-standalone/app/modules/eureka/sunday_assets/app.js",
+      "sha256": "c5d560106c3e4a9769c86c8fd8e075ee0cb3165ab4d09dda28a714735bba667b"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/modules/eureka/sunday_assets/camera.js",
+      "path": "checkin-standalone/app/modules/eureka/sunday_assets/camera.js",
+      "sha256": "3e0dfe0b3f83f3d8c6d6cf2fb79033769cc6b7119354e3efcb93a0653dc8a135"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/modules/eureka/sunday_assets/style.css",
+      "path": "checkin-standalone/app/modules/eureka/sunday_assets/style.css",
+      "sha256": "06cf765500bae1413daed87a9eac5361b5603c771c6c62dbba4f6b93c7c638fa"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/modules/eureka/__init__.py",
+      "path": "checkin-standalone/app/modules/eureka/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/app/modules/__init__.py",
+      "path": "checkin-standalone/app/modules/__init__.py",
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/Dockerfile",
+      "path": "checkin-standalone/Dockerfile",
+      "sha256": "ab15354e2c9973ade1989cf939ddb83dea73c793fb9be453d9ae787788d9f85a"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/.dockerignore",
+      "path": "checkin-standalone/.dockerignore",
+      "sha256": "05a6b061ef0f1e5945ab5a5873eceec56eb410520a7aee83154c50d5864ccbc8"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/provision.py",
+      "path": "checkin-standalone/provision.py",
+      "sha256": "0c581a08d21165f898b7b35afd6e0229899d240d3e8f093348388e6941ee5a69"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/test_routing_probe.py",
+      "path": "checkin-standalone/test_routing_probe.py",
+      "sha256": "c297eccba169864236ed9ae6305f38266d2319625c5abcf753d1bc41ca89c941"
+    },
+    {
+      "source": "/home/peter/church-checkin-standalone/install-static-ui.py",
+      "path": "checkin-standalone/install-static-ui.py",
+      "sha256": "2aa5c356819553982738f6544cf13e80ab127188617c6b9a77e0c2cec2fd154b"
+    }
+  ],
+  "notice": "Source hashes identify originals in the private backup. Public files omit credentials, user migration records and runtime data; login.php is a redacted example. UTF-8/LF normalization means public file hashes may differ.",
+  "private_files": [
+    "checkin-php/check_db.py",
+    "checkin-php/insert_menu.py",
+    "checkin-php/query_menu.py",
+    "platform/scripts/migrate_users.py"
+  ],
+  "omitted_sensitive_or_runtime": [
+    "/home/apps1/nads26/.env",
+    "/home/apps1/nads26/nads26db_backup.sql",
+    "/home/apps1/nads26/backup.log",
+    "/home/apps1/nads26/scripts/classify_members.py",
+    "/home/apps1/nads26/scripts/write_wifi_tag.py",
+    "/home/apps1/nads26/scripts/sync_remote_sqlite.py",
+    "/home/peterchen/church_checkin/api/db_config.php"
+  ]
+}

@@ -2,37 +2,42 @@
 <html lang="zh-TW">
 <head>
     <meta charset="UTF-8">
+    <script src="/admin-entry.js?v=20261027-show-sunday"></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智慧報到系統 - 後台管理</title>
-    <link rel="stylesheet" href="style_admin.css?v=2">
+    <title>北門報到系統｜後台</title>
+    <link rel="stylesheet" href="style_admin.css?v=20261107-access-mobile">
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+#tab-contacts .table-container { overflow-x:auto; }
+#tab-contacts table { min-width:3200px; }
+#tab-contacts th { white-space:nowrap; }
+#tab-contacts td { min-width:90px; max-width:300px; white-space:normal; overflow-wrap:anywhere; }
+#tab-contacts td button { display:block; white-space:nowrap; margin:4px 0; }
+</style>
 </head>
-<body>
+<body data-admin-version="20261027-show-sunday">
     <div class="admin-container">
         <!-- 側邊導航欄 -->
         <aside class="sidebar">
             <div class="sidebar-header">
-                <h2>👑 系統管理後台</h2>
+                <h2>👑 報到系統後台</h2>
+<button type="button" id="sidebar-toggle" class="sidebar-toggle" aria-controls="admin-sidebar-nav" aria-expanded="true" aria-label="收合功能選單">‹</button>
             </div>
-            <nav class="sidebar-nav">
-                <button class="nav-btn active" data-tab="logs">
-                    <span class="icon">📋</span> 打卡紀錄查詢
-                </button>
+            <nav class="sidebar-nav" id="admin-sidebar-nav" aria-label="後台功能">
+                <button class="nav-btn" data-tab="logs">
+                    <span class="icon">📋</span><span class="nav-label">打卡紀錄查詢</span></button>
+                <button class="nav-btn active" data-tab="sunday-records">
+                    <span class="icon">⛪</span><span class="nav-label">主日報到記錄</span></button>
                 <button class="nav-btn" data-tab="events">
-                    <span class="icon">📅</span> 課程與活動管理
-                </button>
+                    <span class="icon">📅</span><span class="nav-label">課程與活動管理</span></button>
                 <button class="nav-btn" data-tab="employees">
-                    <span class="icon">👥</span> 員工名單管理
-                </button>
+                    <span class="icon">👥</span><span class="nav-label">員工名單管理</span></button>
                 <button class="nav-btn" data-tab="contacts">
-                    <span class="icon">📇</span> 通訊錄管理
-                </button>
-                <button class="nav-btn" onclick="window.open('index.html', '_blank')">
-                    <span class="icon">🔙</span> 另開前台報到
-                </button>
+                    <span class="icon">📇</span><span class="nav-label">通訊錄管理</span></button>
+                <button class="nav-btn" onclick="window.open('http://192.168.16.240:8022/', '_blank')">
+                    <span class="icon">🔙</span><span class="nav-label">另開前台報到</span></button>
                 <button class="nav-btn" onclick="logout()" style="color: var(--danger); margin-top: auto; border-top: 1px solid #eee; border-radius: 0;">
-                    <span class="icon">🚪</span> 登出系統
-                </button>
+                    <span class="icon">🚪</span><span class="nav-label">登出系統</span></button>
             </nav>
         </aside>
 
@@ -40,7 +45,7 @@
         <main class="main-content">
             
             <!-- 1. 打卡紀錄查詢 -->
-            <section id="tab-logs" class="tab-pane active">
+            <section id="tab-logs" class="tab-pane">
                 <header class="section-header">
                     <h2>📋 打卡紀錄查詢</h2>
                 </header>
@@ -78,11 +83,17 @@
                 </div>
             </section>
 
+            <section id="tab-sunday-records" class="tab-pane active">
+                <header class="section-header"><h2>⛪ 主日報到記錄</h2></header>
+                <iframe id="sunday-records-frame" title="主日報到記錄與各堂人數" style="width:100%;height:80vh;border:0;border-radius:12px;background:white"></iframe>
+            </section>
+
             <!-- 2. 課程與活動管理 -->
             <section id="tab-events" class="tab-pane">
                 <header class="section-header">
                     <h2>📅 課程與活動管理</h2>
-                    <button class="btn primary" onclick="openEventModal()">+ 新增課程/活動</button>
+                    <a class="btn" href="http://192.168.16.240:26001/education/courses/" target="_blank" rel="noopener">至平台課程管理</a>
+                    <button class="btn primary" onclick="openEventModal()">+ 新增特別聚會</button>
                 </header>
                 <div class="grid-container" id="events-grid">
                     <!-- 載入資料 -->
@@ -93,7 +104,7 @@
             <section id="tab-employees" class="tab-pane">
                 <header class="section-header">
                     <h2>👥 員工名單管理</h2>
-                    <button class="btn primary" onclick="openEmployeeModal()">+ 新增員工</button>
+                    <a class="btn primary" href="http://192.168.16.240:26001/eureka/staff/" target="_blank" rel="noopener">至平台人事管理</a>
                 </header>
                 <div class="filter-bar card">
                     <label style="font-weight: bold; margin-right: 10px;">選擇單位：</label>
@@ -109,10 +120,10 @@
                         <thead>
                             <tr>
                                 <th>名字</th>
-                                <th>所屬單位</th>
-                                <th>職稱</th>
-                                <th>職位</th>
-                                <th>聘僱性質</th>
+                                <th>工號</th>
+                                <th>平台部門</th>
+                                <th>身分代碼</th>
+                                <th>在職狀態</th>
                                 <th>操作</th>
                             </tr>
                         </thead>
@@ -136,7 +147,7 @@
                     <select id="filter-contact-group" style="width: 150px;">
                         <option value="">選擇小組...</option>
                     </select>
-                    <input type="text" id="contact-keyword" placeholder="搜尋姓名、電話、Email、地址..." style="flex:1;">
+                    <input type="text" id="contact-keyword" placeholder="搜尋姓名、電話、Email、地址、LINE、車號、備註..." style="flex:1;">
                     <button class="btn primary" onclick="searchContacts()">查詢</button>
                 </div>
                 <div class="table-container card">
@@ -145,10 +156,28 @@
                             <tr>
                                 <th>會友編號</th>
                                 <th>姓名</th>
-                                <th>性別</th>
-                                <th>手機</th>
-                                <th>牧區/小組</th>
                                 <th>操作</th>
+                                <th>性別</th>
+                                <th>婚姻</th>
+                                <th>生日（民國）</th>
+                                <th>住家電話</th>
+                                <th>公司電話</th>
+                                <th>手機</th>
+                                <th>地址</th>
+                                <th>Email</th>
+                                <th>受洗</th>
+                                <th>牧區</th>
+                                <th>小組</th>
+                                <th>家庭 ID</th>
+                                <th>訪客資訊</th>
+                                <th>緊急聯絡人</th>
+                                <th>緊急聯絡電話</th>
+                                <th>關係</th>
+                                <th>附註</th>
+                                <th>來教會日期</th>
+                                <th>輸入資料日期</th>
+                                <th>車號</th>
+                                <th>LINE ID</th>
                             </tr>
                         </thead>
                         <tbody id="contacts-tbody">
@@ -171,11 +200,10 @@
     <div id="event-modal" class="modal">
         <div class="modal-content card">
             <span class="close" onclick="closeEventModal()">&times;</span>
-            <h3 style="margin-top:0;">新增課程 / 活動</h3>
+            <h3 style="margin-top:0;">新增特別聚會</h3>
             <div class="form-group">
                 <label>類型</label>
                 <select id="event-type">
-                    <option value="course">成人主日學 (課程)</option>
                     <option value="special">特別聚會</option>
                 </select>
             </div>
@@ -277,6 +305,6 @@
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="admin.js?v=6"></script>
+    <script src="admin.js?v=20261107-contact-actions"></script>
 </body>
 </html>

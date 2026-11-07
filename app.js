@@ -8,8 +8,10 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- State & DOM Elements ---
     let currentMode = '主日聚會';
     let isProcessing = false;
+    let successDisplay = null;
+    let successDisplayTimer;
     let cameraModeActive = false;
-    let html5QrcodeScanner = null;
+
 
     const tabs = document.querySelectorAll('.tab');
     const statusCard = document.getElementById('status-card');
@@ -40,9 +42,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let allSectionsData = {};
     
     const scannerInput = document.getElementById('scanner-input');
-    const btnCamera = document.getElementById('toggle-camera');
-    const readerContainer = document.getElementById('reader-container');
-
     const soundSuccess = document.getElementById('sound-success');
     const soundError = document.getElementById('sound-error');
 
@@ -65,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (btnSubmitPin) {
         btnSubmitPin.addEventListener('click', () => {
-            if (pinInput.value === '47262638') {
+            if (pinInput.value === '__PRIVATE_BACKUP_ONLY__') {
                 closePinModal();
                 proceedWithCategory('同工打卡');
             } else {
@@ -96,6 +95,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function proceedWithCategory(category) {
         currentMode = category;
+        viewScan.classList.toggle('sunday-scan', category === '主日聚會');
         
         viewHome.classList.add('hidden');
         
@@ -117,6 +117,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 eventSelectionContainer.classList.add('hidden');
                 cellgroupSelectionContainer.classList.add('hidden');
                 if (unitSelectionContainer) unitSelectionContainer.classList.remove('hidden');
+                fetchStaffUnits();
             } else {
                 eventSelectionContainer.classList.remove('hidden');
                 cellgroupSelectionContainer.classList.add('hidden');
@@ -172,9 +173,24 @@ document.addEventListener('DOMContentLoaded', () => {
         viewHome.classList.remove('hidden');
         const btnHome = document.getElementById('btn-home');
         if (btnHome) btnHome.style.display = 'none';
-        if (cameraModeActive) stopCamera();
+
     };
 
+    async function fetchStaffUnits() {
+        if (!unitSelect) return;
+        unitSelect.replaceChildren(new Option('讀取平台部門中...', ''));
+        try {
+            const response = await fetch('api/sections.php');
+            const data = await response.json();
+            if (!data.success) throw new Error('Cannot load platform departments');
+            unitSelect.replaceChildren(new Option('請選擇平台部門...', ''));
+            (data.staff_units || []).forEach(unit => unitSelect.add(new Option(unit, unit)));
+        } catch (error) {
+            unitSelect.replaceChildren(new Option('平台部門讀取失敗，請重試', ''));
+        }
+    }
+
+    
     // --- Fetch Events ---
     async function fetchEvents() {
         try {
@@ -205,7 +221,7 @@ document.addEventListener('DOMContentLoaded', () => {
             if (evt.type === targetType) {
                 const option = document.createElement('option');
                 option.value = evt.id;
-                option.textContent = evt.name;
+                option.textContent = evt.code ? `${evt.code} · ${evt.name}` : evt.name;
                 eventSelect.appendChild(option);
             }
         });
@@ -288,55 +304,13 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- Camera Scanner Logic ---
-    btnCamera.addEventListener('click', () => {
-        if (!cameraModeActive) {
-            startCamera();
-        } else {
-            stopCamera();
-        }
-    });
-
-    function startCamera() {
-        readerContainer.classList.remove('hidden');
-        btnCamera.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>`;
-        cameraModeActive = true;
-        viewScan.classList.add('camera-active');
-        
-        statusCard.classList.add('hidden');
-
-        html5QrcodeScanner = new Html5QrcodeScanner(
-            "reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
-        
-        html5QrcodeScanner.render(onScanSuccess, onScanFailure);
-    }
-
-    function stopCamera() {
-        if (html5QrcodeScanner) {
-            html5QrcodeScanner.clear().then(() => {
-                readerContainer.classList.add('hidden');
-                btnCamera.innerHTML = `<svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path><circle cx="12" cy="13" r="4"></circle></svg>`;
-                cameraModeActive = false;
-                viewScan.classList.remove('camera-active');
-                resetStatus();
-            });
-        }
-    }
-
-    function onScanSuccess(decodedText, decodedResult) {
-        if (isProcessing) return;
-        // Do not stop camera, let it continue scanning
-        handleScan(decodedText);
-    }
-
-    function onScanFailure(error) {
-        // Ignore continuous stream of failures
-    }
-
+    // Camera scanning is temporarily disabled; keyboard scanners remain available.
     // --- Core Logic ---
     async function handleScan(qrCodeId) {
         if (isProcessing) return;
         isProcessing = true;
+        clearTimeout(successDisplayTimer);
+        successDisplay = null;
         
         // UI Loading
         statusCard.classList.remove('hidden');
@@ -404,10 +378,20 @@ document.addEventListener('DOMContentLoaded', () => {
         
         userInfo.classList.remove('hidden');
         
-        soundSuccess.currentTime = 0;
-        soundSuccess.play().catch(e => console.log('Audio play failed:', e));
-        
-        setTimeout(resetStatus, 2000);
+        playCheckinFeedback();
+        if (currentMode === '主日聚會') {
+            statusCard.classList.add('sunday-success');
+            isProcessing = false;
+            successDisplay = new Promise(resolve => {
+                successDisplayTimer = setTimeout(() => {
+                    successDisplay = null;
+                    if (!isProcessing) resetStatus();
+                    resolve();
+                }, 3000);
+            });
+        } else {
+            setTimeout(resetStatus, 2000);
+        }
     }
 
     function showError(message) {
@@ -416,10 +400,9 @@ document.addEventListener('DOMContentLoaded', () => {
         statusTitle.textContent = '報到失敗';
         statusMessage.textContent = message;
         userInfo.classList.add('hidden');
-
+        
         soundError.currentTime = 0;
         soundError.play().catch(e => console.log('Audio play failed:', e));
-        
         setTimeout(resetStatus, 2000);
     }
 
@@ -430,27 +413,261 @@ document.addEventListener('DOMContentLoaded', () => {
         statusTitle.textContent = '等待掃描中...';
         statusMessage.textContent = '請使用條碼掃描器掃描您的專屬 QR Code';
         userInfo.classList.add('hidden');
-        if (cameraModeActive) {
-            statusCard.classList.add('hidden');
-        } else {
-            statusCard.classList.remove('hidden');
+        statusCard.classList.remove('hidden');
+    }
+
+    // --- Check-in feedback settings ---
+    const feedbackKey = 'beimen-checkin-recordings';
+    const recordingLimit = 500000;
+    let feedback = { mode: 'bell', clips: [] };
+    let nextClip = 0;
+    const recordedAudio = new Audio();
+    try {
+        const saved = JSON.parse(localStorage.getItem(feedbackKey));
+        if (saved && ['silent', 'bell', 'recorded'].includes(saved.mode) && Array.isArray(saved.clips)) {
+            feedback = { mode: saved.mode, clips: saved.clips.slice(0, 5) };
+        }
+    } catch {
+        // Browser storage may be unavailable.
+    }
+
+    function playCheckinFeedback() {
+        recordedAudio.pause();
+        soundSuccess.pause();
+        soundSuccess.currentTime = 0;
+        if (feedback.mode === 'silent') return;
+        if (feedback.mode === 'bell') {
+            soundSuccess.play().catch(error => console.log('Audio play failed:', error));
+            return;
+        }
+        const clips = feedback.clips.filter(Boolean);
+        if (!clips.length) return;
+        recordedAudio.src = clips[nextClip].data;
+        nextClip = (nextClip + 1) % clips.length;
+        recordedAudio.play().catch(error => console.log('Recording play failed:', error));
+    }
+
+    const feedbackButton = document.createElement('button');
+    feedbackButton.type = 'button';
+    feedbackButton.className = 'icon-btn';
+    feedbackButton.id = 'feedback-settings-btn';
+    feedbackButton.title = '報到音效設定';
+    feedbackButton.setAttribute('aria-label', feedbackButton.title);
+    feedbackButton.setAttribute('aria-haspopup', 'dialog');
+    feedbackButton.textContent = '⚙';
+    document.getElementById('fullscreen-btn').before(feedbackButton);
+
+    const feedbackDialog = document.createElement('dialog');
+    feedbackDialog.className = 'feedback-dialog';
+    feedbackDialog.setAttribute('aria-labelledby', 'feedback-settings-title');
+    feedbackDialog.innerHTML = `
+        <form method="dialog">
+            <h2 id="feedback-settings-title">報到音效設定</h2>
+            <label for="feedback-mode">報到成功音效</label>
+            <select id="feedback-mode">
+                <option value="silent">無聲</option>
+                <option value="bell">原始鈴聲</option>
+                <option value="recorded">自行錄製</option>
+            </select>
+            <fieldset>
+                <legend>錄音（最多 5 段）</legend>
+                <p>每位報到成功播放一段，依序輪播。每段音檔上限 500 KB。</p>
+                <p data-mic-help>目前的瀏覽器或網址無法使用麥克風，可上傳已錄好的音檔。</p>
+                ${Array.from({ length: 5 }, (_, index) => `
+                    <div class="feedback-clip">
+                        <label>第 ${index + 1} 段 <input type="file" accept="audio/*,.m4a,.mp3,.wav,.ogg,.webm"></label>
+                        <span data-clip-name></span>
+                        <button type="button" data-record>錄音</button>
+                        <button type="button" data-preview>試聽</button>
+                        <button type="button" data-remove>移除</button>
+                    </div>`).join('')}
+            </fieldset>
+            <p class="feedback-settings-status" role="status"></p>
+            <div class="feedback-actions">
+                <button type="button" data-cancel>取消</button>
+                <button type="submit">儲存</button>
+            </div>
+        </form>`;
+    document.body.append(feedbackDialog);
+
+    const feedbackForm = feedbackDialog.querySelector('form');
+    const feedbackSelect = feedbackDialog.querySelector('select');
+    const feedbackFieldset = feedbackDialog.querySelector('fieldset');
+    const feedbackStatus = feedbackDialog.querySelector('[role="status"]');
+    const rows = [...feedbackDialog.querySelectorAll('.feedback-clip')];
+    const canRecord = Boolean(navigator.mediaDevices?.getUserMedia && window.MediaRecorder);
+    const preview = new Audio();
+    let draft = [];
+    let recording = null;
+    let pending = false;
+    let editSession = 0;
+
+    function refreshFeedback() {
+        feedbackFieldset.disabled = feedbackSelect.value !== 'recorded';
+        feedbackDialog.querySelector('[type="submit"]').disabled = Boolean(recording || pending);
+        rows.forEach((row, index) => {
+            const active = recording?.index === index;
+            row.querySelector('[data-clip-name]').textContent = draft[index]?.name || '尚未設定';
+            const recordButton = row.querySelector('[data-record]');
+            recordButton.hidden = !canRecord;
+            recordButton.textContent = active ? '停止錄音' : '錄音';
+            recordButton.disabled = pending || Boolean(recording && !active);
+            row.querySelector('input').disabled = Boolean(recording || pending);
+            row.querySelector('[data-preview]').disabled = !draft[index] || Boolean(recording || pending);
+            row.querySelector('[data-remove]').disabled = !draft[index] || Boolean(recording || pending);
+        });
+    }
+
+    async function loadClip(index, file, name, session) {
+        if (session !== editSession) return;
+        if (file.size === 0 || file.size > recordingLimit) {
+            feedbackStatus.textContent = '請使用非空白且不超過 500 KB 的音檔。';
+            return;
+        }
+        pending = true;
+        refreshFeedback();
+        try {
+            const data = await new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve(reader.result);
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            });
+            if (session === editSession) {
+                draft[index] = { name, data };
+                feedbackStatus.textContent = '';
+            }
+        } catch {
+            if (session === editSession) feedbackStatus.textContent = '無法讀取這段音檔。';
+        } finally {
+            if (session === editSession) {
+                pending = false;
+                refreshFeedback();
+            }
         }
     }
 
-    // --- Fullscreen Logic ---
-    const fullscreenBtn = document.getElementById('fullscreen-btn');
-    if (fullscreenBtn) {
-        fullscreenBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            if (!document.fullscreenElement) {
-                document.documentElement.requestFullscreen().catch(err => {
-                    console.error(`Error attempting to enable fullscreen: ${err.message}`);
+    feedbackDialog.querySelector('[data-mic-help]').hidden = canRecord;
+    rows.forEach((row, index) => {
+        const input = row.querySelector('input');
+        input.addEventListener('change', () => {
+            const file = input.files[0];
+            if (file) loadClip(index, file, file.name, editSession);
+            input.value = '';
+        });
+        row.querySelector('[data-preview]').addEventListener('click', () => {
+            preview.src = draft[index].data;
+            preview.play().catch(() => { feedbackStatus.textContent = '無法播放這段音檔。'; });
+        });
+        row.querySelector('[data-remove]').addEventListener('click', () => {
+            draft[index] = null;
+            refreshFeedback();
+        });
+        row.querySelector('[data-record]').addEventListener('click', async () => {
+            if (recording) {
+                if (recording.recorder.state !== 'inactive') recording.recorder.stop();
+                return;
+            }
+            const session = editSession;
+            let stream;
+            pending = true;
+            refreshFeedback();
+            try {
+                stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                if (session !== editSession) {
+                    stream.getTracks().forEach(track => track.stop());
+                    return;
+                }
+                preview.pause();
+                const recorder = new MediaRecorder(stream);
+                const chunks = [];
+                recorder.addEventListener('dataavailable', event => { if (event.data.size) chunks.push(event.data); });
+                const timer = setTimeout(() => { if (recorder.state === 'recording') recorder.stop(); }, 15000);
+                recorder.addEventListener('stop', () => {
+                    clearTimeout(timer);
+                    stream.getTracks().forEach(track => track.stop());
+                    if (session !== editSession) return;
+                    recording = null;
+                    loadClip(index, new Blob(chunks, { type: recorder.mimeType }), `麥克風錄音 ${index + 1}`, session);
+                    refreshFeedback();
                 });
-            } else {
-                document.exitFullscreen();
+                recorder.start();
+                recording = { index, recorder, stream };
+                feedbackStatus.textContent = '錄音中，最長 15 秒。';
+            } catch {
+                stream?.getTracks().forEach(track => track.stop());
+                if (session === editSession) feedbackStatus.textContent = '無法使用麥克風，可改為上傳音檔。';
+            } finally {
+                if (session === editSession) {
+                    pending = false;
+                    refreshFeedback();
+                }
             }
         });
+    });
+
+    feedbackButton.addEventListener('click', () => {
+        editSession++;
+        draft = [...feedback.clips];
+        feedbackSelect.value = feedback.mode;
+        feedbackStatus.textContent = '';
+        refreshFeedback();
+        feedbackDialog.showModal();
+    });
+    feedbackSelect.addEventListener('change', () => {
+        if (recording && recording.recorder.state !== 'inactive') recording.recorder.stop();
+        refreshFeedback();
+    });
+    feedbackDialog.querySelector('[data-cancel]').addEventListener('click', () => feedbackDialog.close());
+    feedbackDialog.addEventListener('close', () => {
+        editSession++;
+        preview.pause();
+        if (recording) {
+            if (recording.recorder.state !== 'inactive') recording.recorder.stop();
+            recording.stream.getTracks().forEach(track => track.stop());
+        }
+        recording = null;
+        pending = false;
+    });
+    feedbackForm.addEventListener('submit', event => {
+        event.preventDefault();
+        if (pending || recording) return;
+        const mode = feedbackSelect.value;
+        if (mode === 'recorded' && !draft.some(Boolean)) {
+            feedbackStatus.textContent = '請至少加入一段錄音。';
+            return;
+        }
+        const updated = { mode, clips: draft };
+        try {
+            localStorage.setItem(feedbackKey, JSON.stringify(updated));
+        } catch {
+            feedbackStatus.textContent = '儲存失敗，請試著縮短音檔或減少錄音段數。';
+            return;
+        }
+        feedback = updated;
+        nextClip = 0;
+        feedbackDialog.close();
+    });
+
+    // --- Fullscreen Logic ---
+    const fullscreenBtn = document.getElementById('fullscreen-btn');
+    async function enterFullscreen() {
+        if (!document.fullscreenElement && document.fullscreenEnabled) {
+            try {
+                await document.documentElement.requestFullscreen();
+            } catch {
+                // Direct navigation may require a gesture on this page.
+            }
+        }
     }
+
+    fullscreenBtn?.addEventListener('click', () => {
+        if (document.fullscreenElement) {
+            document.exitFullscreen().catch(() => {});
+        } else {
+            enterFullscreen();
+        }
+    });
 
     // --- Manual Search Logic ---
     const btnManualSearch = document.getElementById('btn-manual-search');
@@ -481,6 +698,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleManualSearch(keyword) {
         if (isProcessing) return;
         isProcessing = true;
+        if (successDisplay) await successDisplay;
         
         statusCard.classList.remove('hidden');
         statusCard.className = 'glass-card status-card idle';
@@ -542,8 +760,7 @@ document.addEventListener('DOMContentLoaded', () => {
                         selectMemberModal.style.display = 'none';
                         isProcessing = false;
                         // Use raw church_id for standard checkin scan logic
-                        const paddedId = String(m.church_id).padStart(6, '0');
-                        handleScan(`NG${paddedId}000`);
+                        handleScan(String(m.church_id));
                     };
                     memberSelectList.appendChild(btn);
                 });
@@ -562,7 +779,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
     if (sundayOnly) {
         proceedWithCategory('主日聚會');
-        document.getElementById('btn-home').style.display = 'none';
-        document.title = '主日聚會報到 - 北門智能報到系統';
+        enterFullscreen();
+        document.addEventListener('click', event => {
+            if (event.target.closest('a, #fullscreen-btn, #btn-home, #feedback-settings-btn')) return;
+            enterFullscreen();
+        }, { once: true });
+        document.getElementById('btn-home').style.display = 'flex';
+        document.title = '主日聚會報到 - 北門報到系統';
     }
 });
