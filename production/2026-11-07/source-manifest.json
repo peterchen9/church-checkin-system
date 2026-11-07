@@ -342,7 +342,7 @@
       "sha256": "2aa5c356819553982738f6544cf13e80ab127188617c6b9a77e0c2cec2fd154b"
     }
   ],
-  "notice": "Source hashes identify originals in the private backup. Public files omit credentials, user migration records and runtime data; login.php is a redacted example. UTF-8/LF normalization means public file hashes may differ.",
+  "notice": "Source hashes identify originals in the private backup. Public files omit credentials, user migration records and runtime data; login.php is a redacted example. UTF-8/LF normalization means public file hashes may differ. The captured runtime app.js also replaces an old embedded PIN with a private-backup placeholder; originals remain in checkin-runtime-app.tar.gz.",
   "private_files": [
     "checkin-php/check_db.py",
     "checkin-php/insert_menu.py",
@@ -357,5 +357,107 @@
     "/home/apps1/nads26/scripts/write_wifi_tag.py",
     "/home/apps1/nads26/scripts/sync_remote_sqlite.py",
     "/home/peterchen/church_checkin/api/db_config.php"
-  ]
+  ],
+  "runtime_capture": {
+    "container": "church-checkin-standalone",
+    "source": "/srv/app",
+    "files": [
+      {
+        "path": "app/Dockerfile",
+        "sha256": "4f4341c739e372b9e001aac9e5ad23137f1c151389b33ef4a08b3a9a6994a201"
+      },
+      {
+        "path": "app/modules/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "app/standalone/auth.py",
+        "sha256": "8d5eacf80c80a99d87e2447dcb8353589fb98e3b42a781e8114a57ded275242e"
+      },
+      {
+        "path": "app/standalone/public_names.py",
+        "sha256": "d713aea3ea9ca93ac94083b2a268fc2c4f8efbaabdd27741bce306578568022a"
+      },
+      {
+        "path": "app/standalone/settings.py",
+        "sha256": "aa224d9b126bd0add85b9e58916484e572d31e3345faba8df2b37df219b5612e"
+      },
+      {
+        "path": "app/standalone/urls.py",
+        "sha256": "63179da0d69efb7de6209adbbbc3fbb446ab9f47084bd060f8e723ec75704f4d"
+      },
+      {
+        "path": "app/standalone/wsgi.py",
+        "sha256": "91112b296782e6e1508149a19f4dcf006063b2936ab34c6a1376ac31680bab00"
+      },
+      {
+        "path": "app/standalone/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "app/templates/checkin_login.html",
+        "sha256": "aad3696935f4a6e53dbc56cf216dbd6fbf2329c4ccce776e3c01e5822f0499ed"
+      },
+      {
+        "path": "app/templates/public_names.html",
+        "sha256": "40a386add8945fc394263348cf49b0dabd6193f93dccd53c9c9987861a086c1e"
+      },
+      {
+        "path": "app/modules/eureka/models.py",
+        "sha256": "567085e0d61ade0f28a2dce3aea996b3761deb824446b1f5835e6e9f8d74402f"
+      },
+      {
+        "path": "app/modules/eureka/sunday_urls.py",
+        "sha256": "527f6be7f8ee0ba962d1cced2100d9f88ddfc23a2a2d49a0ed26956a263a1804"
+      },
+      {
+        "path": "app/modules/eureka/sunday_views.py",
+        "sha256": "12b7b2db0b1f4211981eb10450cba1bcb80904fdc2a8a21b72c494f41c29423f"
+      },
+      {
+        "path": "app/modules/eureka/__init__.py",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+      },
+      {
+        "path": "app/modules/eureka/sunday_assets/app.js",
+        "sha256": "c5d560106c3e4a9769c86c8fd8e075ee0cb3165ab4d09dda28a714735bba667b"
+      },
+      {
+        "path": "app/modules/eureka/sunday_assets/camera.js",
+        "sha256": "3e0dfe0b3f83f3d8c6d6cf2fb79033769cc6b7119354e3efcb93a0653dc8a135"
+      },
+      {
+        "path": "app/modules/eureka/sunday_assets/style.css",
+        "sha256": "06cf765500bae1413daed87a9eac5361b5603c771c6c62dbba4f6b93c7c638fa"
+      },
+      {
+        "path": "app/templates/eureka/barcode_labels.html",
+        "sha256": "624fa261440db1026ae1624b6e946720731072dcb5acb86c76c24322770b6f36"
+      },
+      {
+        "path": "app/templates/eureka/barcode_print.html",
+        "sha256": "b89f613a78e524bc8e9e354a6e215df9d40ec1889e4f08f6200f96bb0f89810e"
+      },
+      {
+        "path": "app/templates/eureka/barcode_search.html",
+        "sha256": "0c0d3a9d1e2b125095e64efc365ea44ce2512131ca4ec4639a61cf5c985d75ae"
+      },
+      {
+        "path": "app/templates/eureka/sunday_base.html",
+        "sha256": "594ba11c93186b21a9e0b558a8188ab37e9d26cae0405d1ecb74bd482eb3c275"
+      },
+      {
+        "path": "app/templates/eureka/sunday_checkin.html",
+        "sha256": "651bb46436728fcc80a4efed0941add4df4e5c058c561dd8bd3a1b029f5eecfa"
+      },
+      {
+        "path": "app/templates/eureka/sunday_history.html",
+        "sha256": "75c12ef9497fe31e844d5bc30b6025e6a0f3a1d51f7797b78cec0c710e1c48e4"
+      },
+      {
+        "path": "app/templates/eureka/sunday_records.html",
+        "sha256": "b700d9723c0d6a052a133d73f39492bf3360503c99b18263960f9adba3abafae"
+      }
+    ]
+  }
 }

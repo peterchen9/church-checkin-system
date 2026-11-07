@@ -63,3 +63,15 @@
 ## 既有每日備份狀態
 
 每日 02:00 的 /home/apps1/nads26/scripts/backup.sh 已設定，但 2026-11-01 至 11-07 的排程紀錄均顯示目的地無法寫入。/mnt/usb1t/nads26 目前實際位於主機系統磁碟，沒有獨立掛載 USB。本次為另建完整備份，沒有擅自修改既有排程或目的地權限；今天一次備份成功不代表每日排程已修復。
+
+## 已完成的資料庫與服務驗證
+
+隔離 MySQL 匯入成功：members 7,987 筆、sunday_checkins 816 筆、checkin_records 108,101 筆、nads26db 共 127 個資料表。測試容器已移除。正式平台、8022 前台及 8033 後台均 HTTP 200；獨立服務 /sunday/ 為預期的 HTTP 302 登入導向。兩套程式共 1,812 個 Python 檔案已完成語法檢查，沒有語法錯誤；未重新執行所有應用功能測試。
+
+歷史清理僅推送 GitHub 可寫分支；GitHub 管理的 PR 參照與快取不在一般 Git push 的可改寫範圍。受限備份保存清理前歷史，應作為敏感資料管理。
+
+## GitHub 保留參照的實際核對
+
+重新下載遠端 mirror 後，可寫分支均已清理；GitHub 保留的 refs/pull/1/head, refs/pull/2/head 仍可到達舊密碼雜湊物件。這些是 GitHub 管理的唯讀 PR 參照，無法由一般 push 改寫。徹底移除保留參照與快取需由版本庫擁有者向 GitHub Support 提出敏感資料清除要求；本次沒有變更或關閉 PR，也沒有輪替正式帳號密碼。受限備份另存 github-managed-ref-audit.json。
+
+GitHub 保留參照處理依據：[GitHub 官方敏感資料移除說明](https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/removing-sensitive-data-from-a-repository)。
